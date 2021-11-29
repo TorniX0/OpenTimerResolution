@@ -44,6 +44,7 @@
             this.minimizeIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.minimizeIconContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.creatorLabel = new System.Windows.Forms.Label();
             this.minimizeIconContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -185,12 +186,24 @@
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitStripMenu_Click);
             // 
+            // creatorLabel
+            // 
+            this.creatorLabel.AutoSize = true;
+            this.creatorLabel.BackColor = System.Drawing.Color.Transparent;
+            this.creatorLabel.ForeColor = System.Drawing.Color.Gray;
+            this.creatorLabel.Location = new System.Drawing.Point(245, 0);
+            this.creatorLabel.Name = "creatorLabel";
+            this.creatorLabel.Size = new System.Drawing.Size(81, 15);
+            this.creatorLabel.TabIndex = 10;
+            this.creatorLabel.Text = "TorniX © 2021";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(327, 237);
+            this.Controls.Add(this.creatorLabel);
             this.Controls.Add(this.textIntervalLabel);
             this.Controls.Add(this.intervalComboBox);
             this.Controls.Add(this.warningLabel);
@@ -229,5 +242,6 @@
         private NotifyIcon minimizeIcon;
         private ContextMenuStrip minimizeIconContextMenu;
         private ToolStripMenuItem quitToolStripMenuItem;
+        private Label creatorLabel;
     }
 }
