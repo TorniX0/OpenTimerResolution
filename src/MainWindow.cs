@@ -117,8 +117,6 @@ namespace OpenTimerResolution
             if (timerResolutionBox.Text != string.Empty)
             {
                 warningLabel.Visible = (double.Parse(timerResolutionBox.Text) > 15.6250d) ? true : false;
-
-                //NtDesiredResolution = int.Parse((double.Parse(timerResolutionBox.Text) * 10000d).ToString());
             }
         }
 
