@@ -5,6 +5,6 @@ OpenTimerResolution is a lightweight open-source application that sets the timer
 
 **In order for the program to take effect, it needs to be running in the background.** 
 
-#License
+# License
 
 This project is licensed under the GNU General Public License version 2 ("GPLv2") and therefore can be used in closed source or commercial projects. However, any commit or change to the main code must be public and there should be a copyright notice in the source code clarifying the license and its terms as part of your project as well as a hyperlink to this repository. [Read more about GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
