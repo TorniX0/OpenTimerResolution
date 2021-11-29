@@ -205,10 +205,5 @@ namespace OpenTimerResolution
         {
             this.Close();
         }
-
-        private void MainWindow_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
