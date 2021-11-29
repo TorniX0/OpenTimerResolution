@@ -1,4 +1,4 @@
-﻿namespace OpenTimerResolution
+namespace OpenTimerResolution
 {
     partial class MainWindow
     {
@@ -45,6 +45,7 @@
             this.minimizeIconContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creatorLabel = new System.Windows.Forms.Label();
+            this.installScheduleButton = new System.Windows.Forms.Button();
             this.minimizeIconContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -132,10 +133,10 @@
             this.warningLabel.ForeColor = System.Drawing.Color.Red;
             this.warningLabel.Location = new System.Drawing.Point(23, 124);
             this.warningLabel.Name = "warningLabel";
-            this.warningLabel.Size = new System.Drawing.Size(286, 30);
+            this.warningLabel.Size = new System.Drawing.Size(289, 30);
             this.warningLabel.TabIndex = 7;
-            this.warningLabel.Text = "WARNING! YOU SHOULDN\'T USE THIS VALUE!\r\nUSE 0.50 IF YOU DON\'T KNOW WHAT YOU\'RE DOIN" +
-    "G!";
+            this.warningLabel.Text = "WARNING! YOU SHOULDN\'T USE THIS VALUE!\r\nUSE 0.50 IF YOU DON\'T KNOW WHAT YOU\'RE DO" +
+    "ING!";
             this.warningLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.warningLabel.Visible = false;
             // 
@@ -197,12 +198,23 @@
             this.creatorLabel.TabIndex = 10;
             this.creatorLabel.Text = "TorniX © 2021";
             // 
+            // installScheduleButton
+            // 
+            this.installScheduleButton.Location = new System.Drawing.Point(23, 240);
+            this.installScheduleButton.Name = "installScheduleButton";
+            this.installScheduleButton.Size = new System.Drawing.Size(289, 23);
+            this.installScheduleButton.TabIndex = 11;
+            this.installScheduleButton.Text = "Install start-up schedule";
+            this.installScheduleButton.UseVisualStyleBackColor = true;
+            this.installScheduleButton.Click += new System.EventHandler(this.installScheduleButton_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(327, 237);
+            this.ClientSize = new System.Drawing.Size(327, 275);
+            this.Controls.Add(this.installScheduleButton);
             this.Controls.Add(this.creatorLabel);
             this.Controls.Add(this.textIntervalLabel);
             this.Controls.Add(this.intervalComboBox);
@@ -243,5 +255,6 @@
         private ContextMenuStrip minimizeIconContextMenu;
         private ToolStripMenuItem quitToolStripMenuItem;
         private Label creatorLabel;
+        private Button installScheduleButton;
     }
 }
