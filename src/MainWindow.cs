@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -108,9 +109,9 @@ namespace OpenTimerResolution
                 MessageBox.Show("Wrong arguments, or something went wrong.");
             }
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+            using (TaskService ts = new TaskService())
             {
-                installScheduleButton.Text = (key != null && key.GetValue("OpenTimerRes") != null) ? "Remove start-up schedule" : "Install start-up schedule";
+                installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
             }
 
             this.Text = $"OpenTimerResolution | {ProgramVersion}";
@@ -214,18 +215,33 @@ namespace OpenTimerResolution
 
         private void installScheduleButton_Click(object sender, EventArgs e)
         {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+            using (TaskService ts = new TaskService())
             {
-                if (key != null && key.GetValue("OpenTimerRes") == null)
+                if (ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
                 {
-                    Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "OpenTimerRes", @$"""{Application.ExecutablePath}"" -minimized", RegistryValueKind.String);
+                    ts.RootFolder.DeleteTask("OpenTimerRes");
                 }
-                else if (key != null && key.GetValue("OpenTimerRes") != null)
+                else
                 {
-                    key.DeleteValue("OpenTimerRes");
+                    TaskDefinition td = ts.NewTask();
+
+                    td.RegistrationInfo.Description = "Opens OpenTimerResultion at startup.";
+
+                    td.Principal.RunLevel = TaskRunLevel.Highest;
+
+                    td.Triggers.Add(new LogonTrigger());
+
+                    td.Actions.Add(new ExecAction(@$"""{Application.ExecutablePath}""", "-minimized"));
+
+                    td.Settings.StopIfGoingOnBatteries = false;
+                    td.Settings.DisallowStartIfOnBatteries = false;
+                    td.Settings.RunOnlyIfNetworkAvailable = false;
+                    td.Settings.Enabled = true;
+
+                    ts.RootFolder.RegisterTaskDefinition("OpenTimerRes", td);
                 }
 
-                installScheduleButton.Text = (key != null && key.GetValue("OpenTimerRes") != null) ? "Remove start-up schedule" : "Install start-up schedule";
+                installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
             }
         }
     }
