@@ -119,6 +119,7 @@ namespace OpenTimerResolution
             // timerResolutionBox
             // 
             this.timerResolutionBox.Location = new System.Drawing.Point(185, 92);
+            this.timerResolutionBox.MaxLength = 7;
             this.timerResolutionBox.Name = "timerResolutionBox";
             this.timerResolutionBox.ShortcutsEnabled = false;
             this.timerResolutionBox.Size = new System.Drawing.Size(60, 23);
