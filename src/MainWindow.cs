@@ -82,9 +82,9 @@ namespace OpenTimerResolution
                     {
                         case "-minimized":
                             {
-                                this.Hide();
-
                                 this.WindowState = FormWindowState.Minimized;
+                            
+                                this.Hide();
 
                                 timerResolutionBox.Text = "0.50";
 
