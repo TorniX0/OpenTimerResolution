@@ -1,4 +1,4 @@
-OpenTimerResolution is a program released under the GPL-2.0 license.
+OpenTimerResolution is a program released under the GPLv2 license.
 
 For more information about the program, please check out the GitHub page:
 https://github.com/TorniX0/OpenTimerResolution
