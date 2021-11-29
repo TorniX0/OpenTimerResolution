@@ -19,4 +19,10 @@
     <Content Include="program.ico" />
   </ItemGroup>
 	
+  <ItemGroup>
+    <Reference Include="Microsoft.Win32.TaskScheduler">
+      <HintPath>TaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+	 
 </Project>
