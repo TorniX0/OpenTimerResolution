@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -33,7 +34,7 @@ namespace OpenTimerResolution
         #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.1.0";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.0";
 
         #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
@@ -105,6 +106,11 @@ namespace OpenTimerResolution
             catch
             {
                 MessageBox.Show("Wrong arguments, or something went wrong.");
+            }
+
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+            {
+                installScheduleButton.Text = (key != null && key.GetValue("OpenTimerRes") != null) ? "Remove start-up schedule" : "Install start-up schedule";
             }
 
             this.Text = $"OpenTimerResolution | {ProgramVersion}";
@@ -204,6 +210,23 @@ namespace OpenTimerResolution
         private void quitStripMenu_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void installScheduleButton_Click(object sender, EventArgs e)
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+            {
+                if (key != null && key.GetValue("OpenTimerRes") == null)
+                {
+                    Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "OpenTimerRes", @$"""{Application.ExecutablePath}"" -minimized", RegistryValueKind.String);
+                }
+                else if (key != null && key.GetValue("OpenTimerRes") != null)
+                {
+                    key.DeleteValue("OpenTimerRes");
+                }
+
+                installScheduleButton.Text = (key != null && key.GetValue("OpenTimerRes") != null) ? "Remove start-up schedule" : "Install start-up schedule";
+            }
         }
     }
 }
