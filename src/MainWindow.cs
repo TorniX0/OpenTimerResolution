@@ -88,7 +88,7 @@ namespace OpenTimerResolution
 
                                 timerResolutionBox.Text = "0.50";
 
-                                var result = NtSetTimerResolution(int.Parse(timerResolutionBox.Text) * 10000, true, out NtCurrentResolution);
+                                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
 
                                 if (result != NtStatus.Success)
                                     MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
