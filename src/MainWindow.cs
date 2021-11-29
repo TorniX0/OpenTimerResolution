@@ -51,7 +51,7 @@ namespace OpenTimerResolution
                 1 => 500,
                 2 => 125,
                 3 => 50,
-                _ => 0,
+                _ => 1000,
             };
         }
 
