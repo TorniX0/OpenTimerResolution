@@ -133,7 +133,7 @@
             this.warningLabel.Name = "warningLabel";
             this.warningLabel.Size = new System.Drawing.Size(286, 30);
             this.warningLabel.TabIndex = 7;
-            this.warningLabel.Text = "WARNING! YOU SHOULDN\'T DO THIS VALUE!\r\nDO 0.50 IF YOU DON\'T KNOW WHAT YOU\'RE DOIN" +
+            this.warningLabel.Text = "WARNING! YOU SHOULDN\'T USE THIS VALUE!\r\nUSE 0.50 IF YOU DON\'T KNOW WHAT YOU\'RE DOIN" +
     "G!";
             this.warningLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.warningLabel.Visible = false;
