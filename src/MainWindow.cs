@@ -33,7 +33,7 @@ namespace OpenTimerResolution
         #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.0.0";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.1.0";
 
         #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
