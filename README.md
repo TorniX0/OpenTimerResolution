@@ -5,7 +5,7 @@ OpenTimerResolution is a lightweight open-source application that sets the timer
 
 **In order for the program to take effect, it needs to be running in the background.** 
 
-Requires .NET 6.0 SDK. https://dotnet.microsoft.com/download/dotnet/6.0
+.NET 6.0 SDK is required to build the project: https://dotnet.microsoft.com/download/dotnet/6.0
 
 # License
 
