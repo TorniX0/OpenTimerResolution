@@ -35,7 +35,7 @@ namespace OpenTimerResolution
         #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.0";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.1";
 
         #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
@@ -121,7 +121,7 @@ namespace OpenTimerResolution
 
         private void timerResolutionBox_TextChanged(object sender, EventArgs e)
         {
-            if (timerResolutionBox.Text != string.Empty)
+            if (timerResolutionBox.Text != string.Empty && timerResolutionBox.Text.Last() != '.')
             {
                 warningLabel.Visible = (double.Parse(timerResolutionBox.Text) > 15.6250d) ? true : false;
             }
