@@ -232,6 +232,7 @@ namespace OpenTimerResolution
             this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.Text = "OpenTimerResolution";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.Resize += new System.EventHandler(this.MainWindow_Resize);
             this.minimizeIconContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
