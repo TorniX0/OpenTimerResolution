@@ -144,6 +144,7 @@ namespace OpenTimerResolution
             // intervalComboBox
             // 
             this.intervalComboBox.FormattingEnabled = true;
+            this.intervalComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.intervalComboBox.Items.AddRange(new object[] {
             "1000ms",
             "500ms",
