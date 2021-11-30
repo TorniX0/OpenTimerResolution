@@ -1,5 +1,6 @@
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -35,7 +36,7 @@ namespace OpenTimerResolution
         #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.1";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.2";
 
         #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
@@ -72,42 +73,6 @@ namespace OpenTimerResolution
             }
 
             InitializeComponent();
-
-            try
-            {
-                string[] args = Environment.GetCommandLineArgs();
-                for (int i = 1; i < args.Length; i++)
-                {
-                    string arg = args[i];
-
-                    switch (arg)
-                    {
-                        case "-minimized":
-                            {
-                                this.WindowState = FormWindowState.Minimized;
-                            
-                                this.Hide();
-
-                                timerResolutionBox.Text = "0.50";
-
-                                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
-
-                                if (result != NtStatus.Success)
-                                    MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                                timerResolutionBox.ReadOnly = true;
-                                timerResolutionBox.Enabled = false;
-                                startButton.Enabled = false;
-                                stopButton.Enabled = true;
-                                break;
-                            }
-                    }
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Wrong arguments, or something went wrong.");
-            }
 
             using (TaskService ts = new TaskService())
             {
@@ -203,6 +168,9 @@ namespace OpenTimerResolution
 
         private void minimizeIcon_MouseClick(object sender, MouseEventArgs e)
         {
+            if (!this.ShowInTaskbar)
+                this.ShowInTaskbar = true;
+
             this.Show();
             this.WindowState = FormWindowState.Normal;
             minimizeIcon.Visible = false;
@@ -242,6 +210,24 @@ namespace OpenTimerResolution
                 }
 
                 installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
+            }
+        }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                timerResolutionBox.Text = "0.50";
+
+                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
+
+                if (result != NtStatus.Success)
+                    MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                timerResolutionBox.ReadOnly = true;
+                timerResolutionBox.Enabled = false;
+                startButton.Enabled = false;
+                stopButton.Enabled = true;
             }
         }
     }
