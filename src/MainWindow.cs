@@ -90,7 +90,7 @@ namespace OpenTimerResolution
 
                                 timerResolutionBox.Text = "0.50";
 
-                                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
+                                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
 
                                 if (result != NtStatus.Success)
                                     MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -123,7 +123,7 @@ namespace OpenTimerResolution
         {
             if (timerResolutionBox.Text != string.Empty && timerResolutionBox.Text.Last() != '.')
             {
-                warningLabel.Visible = (double.Parse(timerResolutionBox.Text) > 15.6250d) ? true : false;
+                warningLabel.Visible = (double.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) > 15.6250d) ? true : false;
             }
         }
 
@@ -150,7 +150,7 @@ namespace OpenTimerResolution
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
+            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
 
             if (result != NtStatus.Success)
             {
@@ -167,7 +167,7 @@ namespace OpenTimerResolution
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), false, out NtCurrentResolution);
+            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), false, out NtCurrentResolution);
                 
             if (result != NtStatus.Success)
             {
