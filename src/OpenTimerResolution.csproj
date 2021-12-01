@@ -2,17 +2,16 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <StartupObject>OpenTimerResolution.Program</StartupObject>
     <ApplicationIcon>program.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>1.0.2.2</AssemblyVersion>
-    <FileVersion>1.0.2.2</FileVersion>
-    <Version>1.0.2.2</Version>
+    <AssemblyVersion>1.0.2.3</AssemblyVersion>
+    <FileVersion>1.0.2.3</FileVersion>
+    <Version>1.0.2.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
