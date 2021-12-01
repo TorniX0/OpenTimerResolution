@@ -3,6 +3,7 @@ using Microsoft.Win32.TaskScheduler;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace OpenTimerResolution
 {
@@ -36,9 +37,11 @@ namespace OpenTimerResolution
         #pragma warning disable CS8602 // Dereference of a possibly null reference.
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.2";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.3";
 
         #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+        private static Dictionary<string, int> Logger = new();
 
         /// <summary>
         /// Receives the index of the Text Update Interval Combo Box, and returns the represented value.
@@ -61,7 +64,7 @@ namespace OpenTimerResolution
         #endregion
 
 
-
+        #region Methods
 
         public MainWindow()
         {
@@ -149,7 +152,8 @@ namespace OpenTimerResolution
 
         private void textChanger_Tick(object sender, EventArgs e)
         {
-            NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
+            if (!timerLogger.Enabled)
+                NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
 
             // Values are represented in milliseconds.
             currentResolutionLabel.Text = $"Current Resolution: {NtActualResolution * 0.0001:N4}ms";
@@ -230,5 +234,64 @@ namespace OpenTimerResolution
                 stopButton.Enabled = true;
             }
         }
+
+        private void logButton_Click(object sender, EventArgs e)
+        {
+            if (!timerLogger.Enabled)
+            {
+                timerLogger.Start();
+                logButton.Text = "Stop logging";
+                logButton.ForeColor = Color.Red;
+            }
+            else
+            {
+                timerLogger.Stop();
+
+                StringBuilder final = new StringBuilder();
+
+                foreach (var pair in Logger)
+                {
+                    final.AppendLine($"{pair.Key}ms - {pair.Value}x");
+                }
+
+                SaveFileDialog saveFileDiag = new SaveFileDialog();
+                saveFileDiag.InitialDirectory = Application.ExecutablePath;
+                saveFileDiag.FileName = System.Text.RegularExpressions.Regex.Replace(@$"OTR-{DateTime.Now}.log", "[\\/:*?\"<>|]", "-").Replace(" ", "_");
+                saveFileDiag.Title = "Choose where to save log file...";
+                saveFileDiag.DefaultExt = "log";
+                saveFileDiag.Filter = "log files (*.log)|*.log";
+                saveFileDiag.CheckPathExists = true;
+                saveFileDiag.CheckFileExists = false;
+
+                var result = saveFileDiag.ShowDialog();
+
+                if (result != DialogResult.OK)
+                {
+                    logButton.Text = "Start logging actual resolution";
+                    logButton.ForeColor = SystemColors.ControlText;
+
+                    MessageBox.Show($"Cancelled log saving.", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                File.WriteAllText(saveFileDiag.FileName, final.ToString());
+
+                logButton.Text = "Start logging actual resolution";
+                logButton.ForeColor = SystemColors.ControlText;
+
+                MessageBox.Show($"Saved log file in {saveFileDiag.FileName}!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void timerLogger_Tick(object sender, EventArgs e)
+        {
+            NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
+
+            Logger.TryGetValue((NtActualResolution * 0.0001).ToString("N4"), out var count);
+            Logger[(NtActualResolution * 0.0001).ToString("N4")] = count + 1;
+        }
+        
+        #endregion
+        
     }
 }
