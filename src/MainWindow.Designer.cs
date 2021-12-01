@@ -46,6 +46,8 @@ namespace OpenTimerResolution
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creatorLabel = new System.Windows.Forms.Label();
             this.installScheduleButton = new System.Windows.Forms.Button();
+            this.logButton = new System.Windows.Forms.Button();
+            this.timerLogger = new System.Windows.Forms.Timer(this.components);
             this.minimizeIconContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,8 +145,8 @@ namespace OpenTimerResolution
             // 
             // intervalComboBox
             // 
-            this.intervalComboBox.FormattingEnabled = true;
             this.intervalComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.intervalComboBox.FormattingEnabled = true;
             this.intervalComboBox.Items.AddRange(new object[] {
             "1000ms",
             "500ms",
@@ -171,7 +173,6 @@ namespace OpenTimerResolution
             this.minimizeIcon.ContextMenuStrip = this.minimizeIconContextMenu;
             this.minimizeIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("minimizeIcon.Icon")));
             this.minimizeIcon.Text = "OpenTimerResolution";
-            this.minimizeIcon.Visible = true;
             this.minimizeIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.minimizeIcon_MouseClick);
             // 
             // minimizeIconContextMenu
@@ -210,12 +211,28 @@ namespace OpenTimerResolution
             this.installScheduleButton.UseVisualStyleBackColor = true;
             this.installScheduleButton.Click += new System.EventHandler(this.installScheduleButton_Click);
             // 
+            // logButton
+            // 
+            this.logButton.Location = new System.Drawing.Point(23, 269);
+            this.logButton.Name = "logButton";
+            this.logButton.Size = new System.Drawing.Size(289, 23);
+            this.logButton.TabIndex = 12;
+            this.logButton.Text = "Start logging actual resolution";
+            this.logButton.UseVisualStyleBackColor = true;
+            this.logButton.Click += new System.EventHandler(this.logButton_Click);
+            // 
+            // timerLogger
+            // 
+            this.timerLogger.Interval = 300;
+            this.timerLogger.Tick += new System.EventHandler(this.timerLogger_Tick);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(327, 275);
+            this.ClientSize = new System.Drawing.Size(327, 301);
+            this.Controls.Add(this.logButton);
             this.Controls.Add(this.installScheduleButton);
             this.Controls.Add(this.creatorLabel);
             this.Controls.Add(this.textIntervalLabel);
@@ -259,5 +276,7 @@ namespace OpenTimerResolution
         private ToolStripMenuItem quitToolStripMenuItem;
         private Label creatorLabel;
         private Button installScheduleButton;
+        private Button logButton;
+        private System.Windows.Forms.Timer timerLogger;
     }
 }
