@@ -1,7 +1,7 @@
 <img src="https://github.com/TorniX0/OpenTimerResolution/raw/main/src/program.ico" width="150" height="150">
 
 # OpenTimerResolution
-OpenTimerResolution is a lightweight open-source application that changes the resolution of the Windows system Timer to a specified value. Running the program with the `-minimized` argument will start the program, force the timer resolution of 0.5ms and minimize itself to tray.
+OpenTimerResolution is a lightweight open-source application that changes the resolution of the Windows system Timer to a specified value. Running the program with the `-minimized` argument will start the program, force the timer resolution of 0.5ms and minimize itself to tray. You can log the actual resolution of the Windows system Timer, then save it into a `.log` file. (since v1.0.2.3)
 
 There's also the option to run it at startup minimized (since v1.0.2.0). 
 
