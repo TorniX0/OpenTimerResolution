@@ -34,12 +34,8 @@ namespace OpenTimerResolution
         private uint NtMaximumResolution = 0;
         private uint NtActualResolution = 0;
 
-        #pragma warning disable CS8602 // Dereference of a possibly null reference.
-
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.3";
-
-        #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.4";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -68,13 +64,6 @@ namespace OpenTimerResolution
 
         public MainWindow()
         {
-            if (System.Diagnostics.Process.GetProcessesByName(System.Diagnostics.Process.GetCurrentProcess().ProcessName).Length > 1)
-            {
-                MessageBox.Show("OpenTimerResolution is already running. Only one instance of this application is allowed.", "OpenTimerResolution");
-                this.Close();
-                return;
-            }
-
             InitializeComponent();
 
             using (TaskService ts = new TaskService())
@@ -118,6 +107,9 @@ namespace OpenTimerResolution
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            if (timerResolutionBox.Text == string.Empty)
+                return;
+
             var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
 
             if (result != NtStatus.Success)
@@ -135,6 +127,9 @@ namespace OpenTimerResolution
 
         private void stopButton_Click(object sender, EventArgs e)
         {
+            if (timerResolutionBox.Text == string.Empty)
+                return;
+
             var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), false, out NtCurrentResolution);
                 
             if (result != NtStatus.Success)
@@ -189,7 +184,9 @@ namespace OpenTimerResolution
         {
             using (TaskService ts = new TaskService())
             {
-                if (ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
+                var exists = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes");
+
+                if (exists)
                 {
                     ts.RootFolder.DeleteTask("OpenTimerRes");
                 }
@@ -213,13 +210,13 @@ namespace OpenTimerResolution
                     ts.RootFolder.RegisterTaskDefinition("OpenTimerRes", td);
                 }
 
-                installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
+                installScheduleButton.Text = exists ? "Remove start-up schedule" : "Install start-up schedule";
             }
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (Program.startMinimized)
             {
                 timerResolutionBox.Text = "0.50";
 
@@ -265,19 +262,17 @@ namespace OpenTimerResolution
 
                 var result = saveFileDiag.ShowDialog();
 
+                logButton.Text = "Start logging actual resolution";
+                logButton.ForeColor = this.ForeColor;
+
                 if (result != DialogResult.OK)
                 {
-                    logButton.Text = "Start logging actual resolution";
-                    logButton.ForeColor = SystemColors.ControlText;
 
                     MessageBox.Show($"Cancelled log saving.", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
                 File.WriteAllText(saveFileDiag.FileName, final.ToString());
-
-                logButton.Text = "Start logging actual resolution";
-                logButton.ForeColor = SystemColors.ControlText;
 
                 MessageBox.Show($"Saved log file in {saveFileDiag.FileName}!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -290,8 +285,47 @@ namespace OpenTimerResolution
             Logger.TryGetValue((NtActualResolution * 0.0001).ToString("N4"), out var count);
             Logger[(NtActualResolution * 0.0001).ToString("N4")] = count + 1;
         }
-        
+
+        private void darkModeBox_CheckedChanged(object sender, EventArgs e)
+        {
+            //maybe upgrade project to WPF?
+
+            if (darkModeBox.Checked)
+            {
+                this.BackColor = Color.Black;
+                this.ForeColor = Color.White;
+                timerResolutionBox.BackColor = this.BackColor;
+                timerResolutionBox.ForeColor = this.ForeColor;
+                intervalComboBox.ForeColor = this.ForeColor;
+                intervalComboBox.BackColor = this.BackColor;
+                logButton.ForeColor = this.ForeColor;
+                logButton.BackColor = this.BackColor;
+                stopButton.ForeColor = this.ForeColor;
+                stopButton.BackColor = this.BackColor;
+                startButton.ForeColor = this.ForeColor;
+                startButton.BackColor = this.BackColor;
+                installScheduleButton.ForeColor = this.ForeColor;
+                installScheduleButton.BackColor = this.BackColor;
+            }
+            else
+            {
+                this.BackColor = Color.White;
+                this.ForeColor = SystemColors.ControlText;
+                timerResolutionBox.BackColor = this.BackColor;
+                timerResolutionBox.ForeColor = this.ForeColor;
+                intervalComboBox.ForeColor = this.ForeColor;
+                intervalComboBox.BackColor = Color.FromArgb(224, 224, 224);
+                logButton.ForeColor = this.ForeColor;
+                logButton.BackColor = this.BackColor;
+                stopButton.ForeColor = this.ForeColor;
+                stopButton.BackColor = this.BackColor;
+                startButton.ForeColor = this.ForeColor;
+                startButton.BackColor = this.BackColor;
+                installScheduleButton.ForeColor = this.ForeColor;
+                installScheduleButton.BackColor = this.BackColor;
+            }
+        }
+
         #endregion
-        
     }
 }
