@@ -48,11 +48,13 @@ namespace OpenTimerResolution
             this.installScheduleButton = new System.Windows.Forms.Button();
             this.logButton = new System.Windows.Forms.Button();
             this.timerLogger = new System.Windows.Forms.Timer(this.components);
+            this.darkModeBox = new System.Windows.Forms.CheckBox();
             this.minimizeIconContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // startButton
             // 
+            this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.startButton.Location = new System.Drawing.Point(62, 159);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 23);
@@ -64,12 +66,13 @@ namespace OpenTimerResolution
             // stopButton
             // 
             this.stopButton.Enabled = false;
+            this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.stopButton.Location = new System.Drawing.Point(178, 159);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 23);
             this.stopButton.TabIndex = 1;
             this.stopButton.Text = "Stop";
-            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.UseVisualStyleBackColor = false;
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
             // currentResolutionLabel
@@ -120,6 +123,7 @@ namespace OpenTimerResolution
             // 
             // timerResolutionBox
             // 
+            this.timerResolutionBox.ForeColor = System.Drawing.SystemColors.ControlText;
             this.timerResolutionBox.Location = new System.Drawing.Point(185, 92);
             this.timerResolutionBox.MaxLength = 7;
             this.timerResolutionBox.Name = "timerResolutionBox";
@@ -145,7 +149,9 @@ namespace OpenTimerResolution
             // 
             // intervalComboBox
             // 
+            this.intervalComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.intervalComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.intervalComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.intervalComboBox.FormattingEnabled = true;
             this.intervalComboBox.Items.AddRange(new object[] {
             "1000ms",
@@ -161,7 +167,6 @@ namespace OpenTimerResolution
             // textIntervalLabel
             // 
             this.textIntervalLabel.AutoSize = true;
-            this.textIntervalLabel.BackColor = System.Drawing.Color.Transparent;
             this.textIntervalLabel.Location = new System.Drawing.Point(41, 205);
             this.textIntervalLabel.Name = "textIntervalLabel";
             this.textIntervalLabel.Size = new System.Drawing.Size(114, 15);
@@ -203,6 +208,7 @@ namespace OpenTimerResolution
             // 
             // installScheduleButton
             // 
+            this.installScheduleButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.installScheduleButton.Location = new System.Drawing.Point(23, 240);
             this.installScheduleButton.Name = "installScheduleButton";
             this.installScheduleButton.Size = new System.Drawing.Size(289, 23);
@@ -213,12 +219,13 @@ namespace OpenTimerResolution
             // 
             // logButton
             // 
+            this.logButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.logButton.Location = new System.Drawing.Point(23, 269);
             this.logButton.Name = "logButton";
-            this.logButton.Size = new System.Drawing.Size(289, 23);
+            this.logButton.Size = new System.Drawing.Size(289, 26);
             this.logButton.TabIndex = 12;
             this.logButton.Text = "Start logging actual resolution";
-            this.logButton.UseVisualStyleBackColor = true;
+            this.logButton.UseVisualStyleBackColor = false;
             this.logButton.Click += new System.EventHandler(this.logButton_Click);
             // 
             // timerLogger
@@ -226,12 +233,24 @@ namespace OpenTimerResolution
             this.timerLogger.Interval = 300;
             this.timerLogger.Tick += new System.EventHandler(this.timerLogger_Tick);
             // 
+            // darkModeBox
+            // 
+            this.darkModeBox.AutoSize = true;
+            this.darkModeBox.Location = new System.Drawing.Point(23, 301);
+            this.darkModeBox.Name = "darkModeBox";
+            this.darkModeBox.Size = new System.Drawing.Size(84, 19);
+            this.darkModeBox.TabIndex = 13;
+            this.darkModeBox.Text = "Dark Mode";
+            this.darkModeBox.UseVisualStyleBackColor = true;
+            this.darkModeBox.CheckedChanged += new System.EventHandler(this.darkModeBox_CheckedChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(327, 301);
+            this.ClientSize = new System.Drawing.Size(327, 330);
+            this.Controls.Add(this.darkModeBox);
             this.Controls.Add(this.logButton);
             this.Controls.Add(this.installScheduleButton);
             this.Controls.Add(this.creatorLabel);
@@ -278,5 +297,6 @@ namespace OpenTimerResolution
         private Button installScheduleButton;
         private Button logButton;
         private System.Windows.Forms.Timer timerLogger;
+        private CheckBox darkModeBox;
     }
 }
