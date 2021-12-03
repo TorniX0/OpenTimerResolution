@@ -2,34 +2,35 @@ namespace OpenTimerResolution
 {
     internal static class Program
     {
-        private static string[] args = Environment.GetCommandLineArgs();
+        internal static readonly bool startMinimized = Environment.GetCommandLineArgs().Any(t => t.Equals("-minimized"));
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            if (System.Diagnostics.Process.GetProcessesByName(System.Diagnostics.Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                MessageBox.Show("OpenTimerResolution is already running. Only one instance of this application is allowed.", "OpenTimerResolution");
+                Application.Exit();
+                return;
+            }
+
             ApplicationConfiguration.Initialize();
             MainWindow mainWind = new MainWindow();
 
-            try
-            {
-                for (int i = 1; i < args.Length; i++)
-                {
-                    string arg = args[i];
+            if (startMinimized) {
 
-                    switch (arg)
-                    {
-                        case "-minimized":
-                            mainWind.WindowState = FormWindowState.Minimized;
-                            mainWind.ShowInTaskbar = false;
-                            break;
-                    }
+                try
+                {
+                    mainWind.WindowState = FormWindowState.Minimized;
+                    mainWind.ShowInTaskbar = false;
                 }
-            }
-            catch
-            {
-                MessageBox.Show("Wrong arguments, or something went wrong.");
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
             }
 
             Application.Run(mainWind);
