@@ -9,9 +9,9 @@
     <StartupObject>OpenTimerResolution.Program</StartupObject>
     <ApplicationIcon>program.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>1.0.2.3</AssemblyVersion>
-    <FileVersion>1.0.2.3</FileVersion>
-    <Version>1.0.2.3</Version>
+    <AssemblyVersion>1.0.2.4</AssemblyVersion>
+    <FileVersion>1.0.2.4</FileVersion>
+    <Version>1.0.2.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
