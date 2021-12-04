@@ -7,7 +7,7 @@ There's also the option to run it at startup minimized (since v1.0.2.0).
 
 You can also enable dark mode (since v1.0.2.4).
 
-
+ 
 **In order for the program to take effect, it needs to be running in the background.** 
 
 .NET 6.0 SDK is required to build the project: https://dotnet.microsoft.com/download/dotnet/6.0
