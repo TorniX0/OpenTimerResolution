@@ -184,9 +184,7 @@ namespace OpenTimerResolution
         {
             using (TaskService ts = new TaskService())
             {
-                var exists = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes");
-
-                if (exists)
+                if (ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
                 {
                     ts.RootFolder.DeleteTask("OpenTimerRes");
                 }
@@ -210,7 +208,7 @@ namespace OpenTimerResolution
                     ts.RootFolder.RegisterTaskDefinition("OpenTimerRes", td);
                 }
 
-                installScheduleButton.Text = exists ? "Remove start-up schedule" : "Install start-up schedule";
+                installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
             }
         }
 
