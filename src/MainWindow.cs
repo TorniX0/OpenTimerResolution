@@ -35,7 +35,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.4";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.5";
 
         private static Dictionary<string, int> Logger = new();
 
