@@ -41,7 +41,7 @@ namespace OpenTimerResolution
 
             var result = GetPerformanceInfo(out ppsmemCounter, Marshal.SizeOf(ppsmemCounter));
 
-            if (result is true)
+            if (result == true)
                 return Convert.ToInt64(ppsmemCounter.SystemCache.ToInt64() * ppsmemCounter.PageSize.ToInt64() / 1048576);
             else
                 return 0;
@@ -64,7 +64,7 @@ namespace OpenTimerResolution
 
             var result = GetPerformanceInfo(out ppsmemCounter, Marshal.SizeOf(ppsmemCounter));
 
-            if (result is true)
+            if (result == true)
                 return Convert.ToInt64(ppsmemCounter.PhysicalTotal.ToInt64() * ppsmemCounter.PageSize.ToInt64() / 1048576);
             else
                 return 0;
@@ -79,7 +79,7 @@ namespace OpenTimerResolution
 
             var result = GetPerformanceInfo(out ppsmemCounter, Marshal.SizeOf(ppsmemCounter));
 
-            if (result is true)
+            if (result == true)
                 return Convert.ToInt64(ppsmemCounter.PhysicalAvailable.ToInt64() * ppsmemCounter.PageSize.ToInt64() / 1048576);
             else
                 return 0;
