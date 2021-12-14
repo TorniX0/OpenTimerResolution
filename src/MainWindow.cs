@@ -341,12 +341,10 @@ namespace OpenTimerResolution
         {
             if (automaticCacheCleanBox.Checked)
             {
-                purgeCacheButton.Enabled = false;
                 automaticMemoryPurger.Start();
             }
             else
             {
-                purgeCacheButton.Enabled = true;
                 automaticMemoryPurger.Stop();
             }
         }
