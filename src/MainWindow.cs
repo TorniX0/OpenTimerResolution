@@ -35,7 +35,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.2.5";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.0";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -102,6 +102,7 @@ namespace OpenTimerResolution
         private void intervalComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             textChanger.Interval = GetIntervalFromIndex(intervalComboBox.SelectedIndex); // Changing the interval on index change.
+            automaticMemoryPurger.Interval = GetIntervalFromIndex(intervalComboBox.SelectedIndex); // Also linked the automatic memory purger to it.
         }
 
 
@@ -144,16 +145,21 @@ namespace OpenTimerResolution
             stopButton.Enabled = false;
         }
 
-
         private void textChanger_Tick(object sender, EventArgs e)
         {
             if (!timerLogger.Enabled)
                 NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
 
-            // Values are represented in milliseconds.
+            // Timer Resolution labels
             currentResolutionLabel.Text = $"Current Resolution: {NtActualResolution * 0.0001:N4}ms";
             minimumResolutionLabel.Text = $"Minimum Resolution: {NtMinimumResolution * 0.0001:N4}ms";
             maximumResolutionLabel.Text = $"Maximum Resolution: {NtMaximumResolution * 0.0001:N4}ms";
+
+            // Memory Cleaner labels
+            totalSystemMemoryText.Text = $"Total system memory: {MemoryCleaner.GetTotalMemory()} MB";
+            freeMemoryText.Text = $"Free memory: {MemoryCleaner.GetAvailableMemory()} MB";
+            cacheSizeText.Text = $"Cache size: {MemoryCleaner.GetStandbyCache()} MB";
+            totalTimesCleanText.Text = $"Total times cleaned: {MemoryCleaner.cleanCounter} time(s)";
         }
 
         private void MainWindow_Resize(object sender, EventArgs e)
@@ -223,6 +229,7 @@ namespace OpenTimerResolution
                 if (result != NtStatus.Success)
                     MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                automaticCacheCleanBox.Checked = true;
                 timerResolutionBox.ReadOnly = true;
                 timerResolutionBox.Enabled = false;
                 startButton.Enabled = false;
@@ -292,36 +299,69 @@ namespace OpenTimerResolution
             {
                 this.BackColor = Color.Black;
                 this.ForeColor = Color.White;
-                timerResolutionBox.BackColor = this.BackColor;
-                timerResolutionBox.ForeColor = this.ForeColor;
-                intervalComboBox.ForeColor = this.ForeColor;
-                intervalComboBox.BackColor = this.BackColor;
-                logButton.ForeColor = this.ForeColor;
-                logButton.BackColor = this.BackColor;
-                stopButton.ForeColor = this.ForeColor;
-                stopButton.BackColor = this.BackColor;
-                startButton.ForeColor = this.ForeColor;
-                startButton.BackColor = this.BackColor;
-                installScheduleButton.ForeColor = this.ForeColor;
-                installScheduleButton.BackColor = this.BackColor;
+                UpdateUI();
             }
             else
             {
                 this.BackColor = Color.White;
                 this.ForeColor = SystemColors.ControlText;
-                timerResolutionBox.BackColor = this.BackColor;
-                timerResolutionBox.ForeColor = this.ForeColor;
-                intervalComboBox.ForeColor = this.ForeColor;
-                intervalComboBox.BackColor = Color.FromArgb(224, 224, 224);
-                logButton.ForeColor = this.ForeColor;
-                logButton.BackColor = this.BackColor;
-                stopButton.ForeColor = this.ForeColor;
-                stopButton.BackColor = this.BackColor;
-                startButton.ForeColor = this.ForeColor;
-                startButton.BackColor = this.BackColor;
-                installScheduleButton.ForeColor = this.ForeColor;
-                installScheduleButton.BackColor = this.BackColor;
+                UpdateUI();
             }
+        }
+
+        private void UpdateUI()
+        {
+            timerResolutionBox.BackColor = this.BackColor;
+            timerResolutionBox.ForeColor = this.ForeColor;
+            intervalComboBox.ForeColor = this.ForeColor;
+            intervalComboBox.BackColor = this.BackColor;
+            logButton.ForeColor = this.ForeColor;
+            logButton.BackColor = this.BackColor;
+            stopButton.ForeColor = this.ForeColor;
+            stopButton.BackColor = this.BackColor;
+            startButton.ForeColor = this.ForeColor;
+            startButton.BackColor = this.BackColor;
+            installScheduleButton.ForeColor = this.ForeColor;
+            installScheduleButton.BackColor = this.BackColor;
+            automaticCacheCleanBox.ForeColor = this.ForeColor;
+            automaticCacheCleanBox.BackColor = this.BackColor;
+            totalTimesCleanText.ForeColor = this.ForeColor;
+            totalTimesCleanText.BackColor = this.BackColor;
+            automaticCacheCleanBox.ForeColor = this.ForeColor;
+            automaticCacheCleanBox.BackColor = this.BackColor;
+            freeMemoryText.ForeColor = this.ForeColor;
+            freeMemoryText.BackColor = this.BackColor;
+            totalSystemMemoryText.ForeColor = this.ForeColor;
+            totalSystemMemoryText.BackColor = this.BackColor;
+            purgeCacheButton.ForeColor = this.ForeColor;
+            purgeCacheButton.BackColor = this.BackColor;
+        }
+
+        private void automaticCacheCleanBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (automaticCacheCleanBox.Checked)
+            {
+                purgeCacheButton.Enabled = false;
+                automaticMemoryPurger.Start();
+            }
+            else
+            {
+                purgeCacheButton.Enabled = true;
+                automaticMemoryPurger.Stop();
+            }
+        }
+
+        private void purgeCacheButton_Click(object sender, EventArgs e)
+        {
+            MemoryCleaner.ClearStandbyCache();
+        }
+
+        private void automaticMemoryPurger_Tick(object sender, EventArgs e)
+        {
+            if (MemoryCleaner.GetStandbyCache() >= 1024 && MemoryCleaner.GetAvailableMemory() <= (MemoryCleaner.GetTotalMemory() / 2))
+                MemoryCleaner.ClearStandbyCache();
+            else
+                return;
         }
 
         #endregion
