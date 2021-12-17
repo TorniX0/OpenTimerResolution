@@ -148,7 +148,7 @@ namespace OpenTimerResolution
         private static extern bool AdjustTokenPrivileges(IntPtr tokenHandle, bool disableAll, ref TokPriv1Luid newState, int bufLen, IntPtr prevState, IntPtr retLen);
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct TokPriv1Luid
+        private struct TokPriv1Luid
         {
             public int Count;
             public long Luid;
@@ -165,7 +165,7 @@ namespace OpenTimerResolution
         private static extern NtStatus NtSetSystemInformation(int SystemInfoClass, IntPtr SystemInfo, int SystemInfoLength);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct PERFORMANCE_INFORMATION
+        private struct PERFORMANCE_INFORMATION
         {
             public int cb;
             public IntPtr CommitTotal;
@@ -190,7 +190,7 @@ namespace OpenTimerResolution
         /// <param name="pPerformanceInformation">A pointer to a PERFORMANCE_INFORMATION structure that receives the performance information.</param>
         /// <param name="cb">The size of the PERFORMANCE_INFORMATION structure, in bytes.</param>
         [DllImport("psapi.dll", SetLastError = true)]
-        static extern bool GetPerformanceInfo(out PERFORMANCE_INFORMATION pPerformanceInformation, int cb);
+        private static extern bool GetPerformanceInfo(out PERFORMANCE_INFORMATION pPerformanceInformation, int cb);
 
         private const int SYSTEMMEMORYLISTINFORMATION = 80;
         private const int SE_PRIVILEGE_ENABLED = 2;
