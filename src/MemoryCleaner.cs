@@ -160,7 +160,7 @@ namespace OpenTimerResolution
         /// </summary>
         /// <param name="SystemInformationClass">The system info class.</param>
         /// <param name="SystemInfo">The system info pointer.</param>
-        /// <param name="SystemInfoLength">The length of the (system information?).</param>
+        /// <param name="SystemInfoLength">The length of the (system info pointer?).</param>
         [DllImport("ntdll.dll", SetLastError = true)]
         private static extern NtStatus NtSetSystemInformation(int SystemInfoClass, IntPtr SystemInfo, int SystemInfoLength);
 
