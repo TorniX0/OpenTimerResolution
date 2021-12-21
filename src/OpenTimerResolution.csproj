@@ -9,10 +9,17 @@
     <StartupObject>OpenTimerResolution.Program</StartupObject>
     <ApplicationIcon>program.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <Version>1.0.3.0</Version>
+    <AssemblyVersion>1.0.3.1</AssemblyVersion>
+    <FileVersion>1.0.3.1</FileVersion>
+    <Version>1.0.3.1</Version>
+    <DebugType>embedded</DebugType>
+    <Product>OpenTimerResolution</Product>
+    <Description>OpenTimerResolution is a lightweight open-source application that changes the resolution of the Windows system Timer to a specified value and has a memory cache cleaner included.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="defaultConfig.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="program.ico" />
@@ -22,6 +29,27 @@
     <Reference Include="Microsoft.Win32.TaskScheduler">
       <HintPath>TaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="defaultConfig.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Compile Update="resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <EmbeddedResource Update="resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 	 
 </Project>
