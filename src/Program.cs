@@ -16,7 +16,13 @@ namespace OpenTimerResolution
                 return;
             }
 
+            if (!File.Exists(@".\OTR_CONFIG.xml"))
+                File.WriteAllText(@".\OTR_CONFIG.xml", resources.defaultConfig);
+
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", @".\OTR_CONFIG.xml");
+
             ApplicationConfiguration.Initialize();
+
             MainWindow mainWind = new MainWindow();
 
             if (startMinimized) {
