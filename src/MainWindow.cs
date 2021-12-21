@@ -35,7 +35,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.0";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.1";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -220,16 +220,35 @@ namespace OpenTimerResolution
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            bool darkMode = false;
+            bool purgeAutomatically = false;
+            float desiredResolution = 0;
+
+            try
+            {
+                if (bool.TryParse(System.Configuration.ConfigurationManager.AppSettings["DarkMode"], out darkMode))
+                    darkModeBox.Checked = darkMode;
+
+                if (bool.TryParse(System.Configuration.ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
+                    automaticCacheCleanBox.Checked = purgeAutomatically;
+
+                if (float.TryParse(System.Configuration.ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution)) { }
+
+                timerResolutionBox.Text = $"{desiredResolution}";
+            }
+            catch
+            {
+                MessageBox.Show("Config is invalid, or something else went wrong!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             if (Program.startMinimized)
             {
-                timerResolutionBox.Text = "0.50";
-
                 var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
 
                 if (result != NtStatus.Success)
                     MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                automaticCacheCleanBox.Checked = true;
                 timerResolutionBox.ReadOnly = true;
                 timerResolutionBox.Enabled = false;
                 startButton.Enabled = false;
@@ -335,6 +354,8 @@ namespace OpenTimerResolution
             totalSystemMemoryText.BackColor = this.BackColor;
             purgeCacheButton.ForeColor = this.ForeColor;
             purgeCacheButton.BackColor = this.BackColor;
+            updateConfigButton.ForeColor = this.ForeColor;
+            updateConfigButton.BackColor = this.BackColor;
         }
 
         private void automaticCacheCleanBox_CheckedChanged(object sender, EventArgs e)
@@ -356,10 +377,28 @@ namespace OpenTimerResolution
 
         private void automaticMemoryPurger_Tick(object sender, EventArgs e)
         {
-            if (MemoryCleaner.GetStandbyCache() >= 1024 && MemoryCleaner.GetAvailableMemory() <= (MemoryCleaner.GetTotalMemory() / 2))
+            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetAvailableMemory() <= (MemoryCleaner.GetTotalMemory() / 2))
                 MemoryCleaner.ClearStandbyCache();
             else
                 return;
+        }
+
+        private void updateConfigButton_Click(object sender, EventArgs e)
+        {
+            ExeConfigurationFileMap customConfigFileMap = new ExeConfigurationFileMap();
+            customConfigFileMap.ExeConfigFilename = AppDomain.CurrentDomain.GetData("APP_CONFIG_FILE").ToString();
+            Configuration customConfig = ConfigurationManager.OpenMappedExeConfiguration(customConfigFileMap, ConfigurationUserLevel.None);
+
+            AppSettingsSection appSettings = customConfig.GetSection("appSettings") as AppSettingsSection;
+
+            appSettings.Settings["DarkMode"].Value = darkModeBox.Checked.ToString();
+            appSettings.Settings["StartPurgingAutomatically"].Value = automaticCacheCleanBox.Checked.ToString();
+            appSettings.Settings["DesiredResolution"].Value = timerResolutionBox.Text;
+
+            customConfig.Save();
+
+
+            MessageBox.Show($"Config was updated successfully!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion
