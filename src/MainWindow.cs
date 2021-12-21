@@ -1,5 +1,6 @@
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
+using System.Configuration;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
