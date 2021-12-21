@@ -56,6 +56,7 @@ namespace OpenTimerResolution
             this.automaticCacheCleanBox = new System.Windows.Forms.CheckBox();
             this.totalTimesCleanText = new System.Windows.Forms.Label();
             this.automaticMemoryPurger = new System.Windows.Forms.Timer(this.components);
+            this.updateConfigButton = new System.Windows.Forms.Button();
             this.minimizeIconContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -318,12 +319,24 @@ namespace OpenTimerResolution
             this.automaticMemoryPurger.Interval = 1000;
             this.automaticMemoryPurger.Tick += new System.EventHandler(this.automaticMemoryPurger_Tick);
             // 
+            // updateConfigButton
+            // 
+            this.updateConfigButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.updateConfigButton.Location = new System.Drawing.Point(674, 297);
+            this.updateConfigButton.Name = "updateConfigButton";
+            this.updateConfigButton.Size = new System.Drawing.Size(105, 29);
+            this.updateConfigButton.TabIndex = 20;
+            this.updateConfigButton.Text = "Update config";
+            this.updateConfigButton.UseVisualStyleBackColor = true;
+            this.updateConfigButton.Click += new System.EventHandler(this.updateConfigButton_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(783, 330);
+            this.Controls.Add(this.updateConfigButton);
             this.Controls.Add(this.totalTimesCleanText);
             this.Controls.Add(this.automaticCacheCleanBox);
             this.Controls.Add(this.freeMemoryText);
@@ -385,5 +398,6 @@ namespace OpenTimerResolution
         private CheckBox automaticCacheCleanBox;
         private Label totalTimesCleanText;
         private System.Windows.Forms.Timer automaticMemoryPurger;
+        private Button updateConfigButton;
     }
 }
