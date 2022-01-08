@@ -3,9 +3,11 @@ namespace OpenTimerResolution
     internal static class Program
     {
         internal static readonly bool startMinimized = Environment.GetCommandLineArgs().Any(t => t.Equals("-minimized"));
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
+
         [STAThread]
         static void Main()
         {
