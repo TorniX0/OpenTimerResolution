@@ -36,7 +36,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.1";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.2";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -75,6 +75,31 @@ namespace OpenTimerResolution
             this.Text = $"OpenTimerResolution | {ProgramVersion}";
 
             intervalComboBox.SelectedIndex = 0; // Default is 1000ms.
+
+            bool darkMode = false;
+            bool purgeAutomatically = false;
+            float desiredResolution = 0;
+
+            try
+            {
+                if (bool.TryParse(ConfigurationManager.AppSettings["DarkMode"], out darkMode))
+                    darkModeBox.Checked = darkMode;
+
+                if (bool.TryParse(ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
+                    automaticCacheCleanBox.Checked = purgeAutomatically;
+
+                if (float.TryParse(ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution)) { }
+
+                if (desiredResolution == 0)
+                    desiredResolution = 0.50f;
+
+                timerResolutionBox.Text = $"{desiredResolution}";
+            }
+            catch
+            {
+                MessageBox.Show("Config is invalid, or something else went wrong!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
 
         private void timerResolutionBox_TextChanged(object sender, EventArgs e)
@@ -167,19 +192,16 @@ namespace OpenTimerResolution
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
-                this.Hide();
                 minimizeIcon.Visible = true;
+                this.Hide();
             }
         }
 
         private void minimizeIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!this.ShowInTaskbar)
-                this.ShowInTaskbar = true;
-
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
             minimizeIcon.Visible = false;
+            this.Show();
+            this.WindowState = FormWindowState.Normal;  
         }
 
         private void quitStripMenu_Click(object sender, EventArgs e)
@@ -221,28 +243,6 @@ namespace OpenTimerResolution
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            bool darkMode = false;
-            bool purgeAutomatically = false;
-            float desiredResolution = 0;
-
-            try
-            {
-                if (bool.TryParse(System.Configuration.ConfigurationManager.AppSettings["DarkMode"], out darkMode))
-                    darkModeBox.Checked = darkMode;
-
-                if (bool.TryParse(System.Configuration.ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
-                    automaticCacheCleanBox.Checked = purgeAutomatically;
-
-                if (float.TryParse(System.Configuration.ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution)) { }
-
-                timerResolutionBox.Text = $"{desiredResolution}";
-            }
-            catch
-            {
-                MessageBox.Show("Config is invalid, or something else went wrong!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             if (Program.startMinimized)
             {
                 var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
@@ -254,6 +254,10 @@ namespace OpenTimerResolution
                 timerResolutionBox.Enabled = false;
                 startButton.Enabled = false;
                 stopButton.Enabled = true;
+
+                this.ShowInTaskbar = false;
+                minimizeIcon.Visible = true;
+                this.Hide();
             }
         }
 
@@ -271,9 +275,11 @@ namespace OpenTimerResolution
 
                 StringBuilder final = new StringBuilder();
 
+                final.AppendLine($"- Note: updated once every {timerLogger.Interval}ms." + Environment.NewLine);
+
                 foreach (var pair in Logger)
                 {
-                    final.AppendLine($"{pair.Key}ms - {pair.Value}x");
+                    final.AppendLine($"{pair.Key}ms - {pair.Value} time(s)");
                 }
 
                 SaveFileDialog saveFileDiag = new SaveFileDialog();
@@ -313,7 +319,7 @@ namespace OpenTimerResolution
 
         private void darkModeBox_CheckedChanged(object sender, EventArgs e)
         {
-            //maybe upgrade project to WPF?
+            // Maybe upgrade project to WPF? Not sure.
 
             if (darkModeBox.Checked)
             {
@@ -362,13 +368,9 @@ namespace OpenTimerResolution
         private void automaticCacheCleanBox_CheckedChanged(object sender, EventArgs e)
         {
             if (automaticCacheCleanBox.Checked)
-            {
                 automaticMemoryPurger.Start();
-            }
             else
-            {
                 automaticMemoryPurger.Stop();
-            }
         }
 
         private void purgeCacheButton_Click(object sender, EventArgs e)
