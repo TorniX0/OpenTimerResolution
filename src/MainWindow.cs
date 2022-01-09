@@ -58,6 +58,24 @@ namespace OpenTimerResolution
             };
         }
 
+        /// <summary>
+        /// Receives a string and translates it to the index for the Text Update Interval Combo Box (in this case used for the config).
+        /// </summary>
+        /// <param name="text">The string needed to be translated.</param>
+        /// <returns>The index value for the Text Update Interval Combo Box.</returns>
+        private static int GetIndexFromString(string text)
+        {
+
+            return text switch
+            {
+                "1000ms" => 0,
+                "500ms" => 1,
+                "125ms" => 2,
+                "50ms" => 3,
+                _ => 0,
+            };
+        }
+
         #endregion
 
 
@@ -74,11 +92,10 @@ namespace OpenTimerResolution
 
             this.Text = $"OpenTimerResolution | {ProgramVersion}";
 
-            intervalComboBox.SelectedIndex = 0; // Default is 1000ms.
-
             bool darkMode = false;
             bool purgeAutomatically = false;
             float desiredResolution = 0;
+            string textUpdateInterval = string.Empty;
 
             try
             {
@@ -88,12 +105,16 @@ namespace OpenTimerResolution
                 if (bool.TryParse(ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
                     automaticCacheCleanBox.Checked = purgeAutomatically;
 
-                if (float.TryParse(ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution)) { }
+                float.TryParse(ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution);
 
                 if (desiredResolution == 0)
                     desiredResolution = 0.50f;
 
                 timerResolutionBox.Text = $"{desiredResolution}";
+
+                textUpdateInterval = ConfigurationManager.AppSettings["TextUpdateInterval"];
+
+                intervalComboBox.SelectedIndex = GetIndexFromString(textUpdateInterval);
             }
             catch
             {
@@ -183,7 +204,7 @@ namespace OpenTimerResolution
 
             // Memory Cleaner labels
             totalSystemMemoryText.Text = $"Total system memory: {MemoryCleaner.GetTotalMemory()} MB";
-            freeMemoryText.Text = $"Free memory: {MemoryCleaner.GetAvailableMemory()} MB";
+            freeMemoryText.Text = $"Free memory: {MemoryCleaner.GetFreeMemory()} MB";
             cacheSizeText.Text = $"Cache size: {MemoryCleaner.GetStandbyCache()} MB";
             totalTimesCleanText.Text = $"Total times cleaned: {MemoryCleaner.cleanCounter} time(s)";
         }
@@ -380,7 +401,7 @@ namespace OpenTimerResolution
 
         private void automaticMemoryPurger_Tick(object sender, EventArgs e)
         {
-            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetAvailableMemory() <= (MemoryCleaner.GetTotalMemory() / 2))
+            if (MemoryCleaner.GetStandbyCache() >= 1024 && MemoryCleaner.GetFreeMemory() <= (MemoryCleaner.GetTotalMemory() / 2))
                 MemoryCleaner.ClearStandbyCache();
             else
                 return;
@@ -397,6 +418,7 @@ namespace OpenTimerResolution
             appSettings.Settings["DarkMode"].Value = darkModeBox.Checked.ToString();
             appSettings.Settings["StartPurgingAutomatically"].Value = automaticCacheCleanBox.Checked.ToString();
             appSettings.Settings["DesiredResolution"].Value = timerResolutionBox.Text;
+            appSettings.Settings["TextUpdateInterval"].Value = intervalComboBox.Text;
 
             customConfig.Save();
 
