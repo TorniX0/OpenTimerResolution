@@ -59,7 +59,18 @@ namespace OpenTimerResolution {
                 resourceCulture = value;
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;configuration&gt;
+        ///	&lt;appSettings&gt;
+        ///		&lt;add key=&quot;DesiredResolution&quot; value=&quot;0.50&quot;/&gt;
+        ///		&lt;add key=&quot;StartPurgingAutomatically&quot; value=&quot;True&quot;/&gt;
+        ///		&lt;add key=&quot;DarkMode&quot; value=&quot;True&quot;/&gt;
+        ///		&lt;add key=&quot;TextUpdateInterval&quot; value=&quot;1000ms&quot;/&gt;
+        ///	&lt;/appSettings&gt;
+        ///&lt;/configuration&gt;.
+        /// </summary>
         internal static string defaultConfig {
             get {
                 return ResourceManager.GetString("defaultConfig", resourceCulture);
