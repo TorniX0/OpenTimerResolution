@@ -86,6 +86,15 @@ namespace OpenTimerResolution
         }
 
         /// <summary>
+        /// Returns the free memory in MB.
+        /// (Available physical memory subtracted by the standby cache memory)
+        /// </summary>
+        internal static Int64 GetFreeMemory()
+        {
+            return GetAvailableMemory() - GetStandbyCache();
+        }
+        
+        /// <summary>
         /// Function to increase the privilege of the process.
         /// </summary>
         /// <param name="privilegeName">The name of the privilege needed.</param>
