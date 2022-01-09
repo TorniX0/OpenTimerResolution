@@ -267,7 +267,7 @@ namespace OpenTimerResolution
             // 
             this.freeMemoryText.AutoSize = true;
             this.freeMemoryText.BackColor = System.Drawing.Color.Transparent;
-            this.freeMemoryText.Location = new System.Drawing.Point(393, 107);
+            this.freeMemoryText.Location = new System.Drawing.Point(393, 106);
             this.freeMemoryText.Name = "freeMemoryText";
             this.freeMemoryText.Size = new System.Drawing.Size(80, 15);
             this.freeMemoryText.TabIndex = 17;
