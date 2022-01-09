@@ -124,6 +124,7 @@
 		&lt;add key="DesiredResolution" value="0.50"/&gt;
 		&lt;add key="StartPurgingAutomatically" value="True"/&gt;
 		&lt;add key="DarkMode" value="True"/&gt;
+		&lt;add key="TextUpdateInterval" value="1000ms"/&gt;
 	&lt;/appSettings&gt;
 &lt;/configuration&gt;</value>
   </data>
