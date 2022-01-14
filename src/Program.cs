@@ -27,20 +27,6 @@ namespace OpenTimerResolution
 
             MainWindow mainWind = new MainWindow();
 
-            if (startMinimized) {
-
-                try
-                {
-                    mainWind.WindowState = FormWindowState.Minimized;
-                    mainWind.ShowInTaskbar = false;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-            }
-
             Application.Run(mainWind);
         }
     }
