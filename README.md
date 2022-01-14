@@ -18,6 +18,7 @@ You can also enable dark mode (since v1.0.2.4).
 
 **In order for the program to take effect, it needs to be running in the background.** 
 
+**Small note: The automatic memory cache cleaner might slow down downloads on apps such as Steam (when downloading or updating).**
 
 .NET 6.0 SDK is required to build the project: https://dotnet.microsoft.com/download/dotnet/6.0
 
