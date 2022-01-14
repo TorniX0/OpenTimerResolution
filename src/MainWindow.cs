@@ -214,14 +214,18 @@ namespace OpenTimerResolution
             if (this.WindowState == FormWindowState.Minimized)
             {
                 minimizeIcon.Visible = true;
+                this.ShowInTaskbar = false;
                 this.Hide();
+                this.SendToBack();
             }
         }
 
         private void minimizeIcon_MouseClick(object sender, MouseEventArgs e)
         {
             minimizeIcon.Visible = false;
+            this.ShowInTaskbar = true;
             this.Show();
+            this.BringToFront();
             this.WindowState = FormWindowState.Normal;  
         }
 
@@ -279,6 +283,7 @@ namespace OpenTimerResolution
                 this.ShowInTaskbar = false;
                 minimizeIcon.Visible = true;
                 this.Hide();
+                this.SendToBack();
             }
         }
 
@@ -401,7 +406,7 @@ namespace OpenTimerResolution
 
         private void automaticMemoryPurger_Tick(object sender, EventArgs e)
         {
-            if (MemoryCleaner.GetStandbyCache() >= 1024 && MemoryCleaner.GetFreeMemory() <= (MemoryCleaner.GetTotalMemory() / 2))
+            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetFreeMemory() < (MemoryCleaner.GetTotalMemory() / 2))
                 MemoryCleaner.ClearStandbyCache();
             else
                 return;
