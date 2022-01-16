@@ -14,7 +14,7 @@ You can log the actual resolution of the Windows system Timer, then save it into
 <img src="https://github.com/TorniX0/OpenTimerResolution/raw/main/repo_imgs/dark_mode.gif" width="603.8461538461538" height="278.4615384615385">
 You can also enable dark mode (since v1.0.2.4).
 
-You can also silently install the start-up schedule (if not already) using the `-silentInstall` argument, and start minimized.
+You can also silently install the start-up schedule (if not already) using the `-silentInstall` argument, and start minimized. (since v1.0.3.5)
 
 **In order for the program to take effect, it needs to be running in the background.** 
 
