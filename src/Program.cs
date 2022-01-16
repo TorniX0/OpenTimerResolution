@@ -2,7 +2,8 @@ namespace OpenTimerResolution
 {
     internal static class Program
     {
-        internal static readonly bool startMinimized = Environment.GetCommandLineArgs().Any(t => t.Equals("-minimized"));
+        internal static bool startMinimized = Environment.GetCommandLineArgs().Any(t => t.Equals("-minimized"));
+        internal static bool silentInstall = Environment.GetCommandLineArgs().Any(t => t.Equals("-silentInstall"));
 
         /// <summary>
         ///  The main entry point for the application.
@@ -17,6 +18,9 @@ namespace OpenTimerResolution
                 Application.Exit();
                 return;
             }
+
+            if (silentInstall)
+                startMinimized = true;
 
             if (!File.Exists(@".\OTR_CONFIG.xml"))
                 File.WriteAllText(@".\OTR_CONFIG.xml", resources.defaultConfig);

@@ -36,7 +36,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.4";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.5";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -284,6 +284,11 @@ namespace OpenTimerResolution
                 minimizeIcon.Visible = true;
                 this.Hide();
                 this.SendToBack();
+            }
+            using (TaskService ts = new TaskService())
+            {
+                if (Program.silentInstall && !ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
+                    installScheduleButton_Click(installScheduleButton, EventArgs.Empty);
             }
         }
 
