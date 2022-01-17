@@ -419,9 +419,7 @@ namespace OpenTimerResolution
 
         private void updateConfigButton_Click(object sender, EventArgs e)
         {
-            ExeConfigurationFileMap customConfigFileMap = new ExeConfigurationFileMap();
-            customConfigFileMap.ExeConfigFilename = AppDomain.CurrentDomain.GetData("APP_CONFIG_FILE").ToString();
-            Configuration customConfig = ConfigurationManager.OpenMappedExeConfiguration(customConfigFileMap, ConfigurationUserLevel.None);
+            Configuration customConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             AppSettingsSection appSettings = customConfig.GetSection("appSettings") as AppSettingsSection;
 

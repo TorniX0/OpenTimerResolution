@@ -1,3 +1,5 @@
+using System.Configuration;
+
 namespace OpenTimerResolution
 {
     internal static class Program
@@ -22,10 +24,9 @@ namespace OpenTimerResolution
             if (silentInstall)
                 startMinimized = true;
 
-            if (!File.Exists(@".\OTR_CONFIG.xml"))
-                File.WriteAllText(@".\OTR_CONFIG.xml", resources.defaultConfig);
+            if (!File.Exists(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath))
+                File.WriteAllText(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath, resources.defaultConfig);
 
-            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", @".\OTR_CONFIG.xml");
 
             ApplicationConfiguration.Initialize();
 
