@@ -1,7 +1,10 @@
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
+using Newtonsoft.Json.Linq;
 using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -36,7 +39,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.5";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.6";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -120,6 +123,43 @@ namespace OpenTimerResolution
             {
                 MessageBox.Show("Config is invalid, or something else went wrong!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+
+            CheckForUpdates();
+        }
+
+        public string GetRequest(string uri, bool jsonaccept)
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(uri);
+
+            if (jsonaccept)
+                client.DefaultRequestHeaders
+                      .Accept
+                      .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var res = client.GetStringAsync(uri).Result;
+            return res;
+        }
+
+        public void CheckForUpdates()
+        {
+            string json = GetRequest("https://github.com/TorniX0/OpenTimerResolution/releases/latest", true);
+            var obj = JObject.Parse(json);
+            string ver = obj["tag_name"].ToString();
+            ver = ver.Substring(8, ver.Length - 8);
+
+            if (ver != ProgramVersion)
+            {
+                DialogResult res = MessageBox.Show($"Found a new update! Would you like to be redirected to the GitHub page?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                switch (res)
+                {
+                    case DialogResult.Yes:
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/TorniX0/OpenTimerResolution/releases/latest") { CreateNoWindow = true });
+                        break;
+                    case DialogResult.No:
+                        break;
+                }
             }
         }
 

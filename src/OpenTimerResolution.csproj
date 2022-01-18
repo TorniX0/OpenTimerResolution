@@ -8,9 +8,9 @@
     <StartupObject>OpenTimerResolution.Program</StartupObject>
     <ApplicationIcon>program.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>1.0.3.5</AssemblyVersion>
-    <FileVersion>1.0.3.5</FileVersion>
-    <Version>1.0.3.5</Version>
+    <AssemblyVersion>1.0.3.6</AssemblyVersion>
+    <FileVersion>1.0.3.6</FileVersion>
+    <Version>1.0.3.6</Version>
     <DebugType>embedded</DebugType>
     <Product>OpenTimerResolution</Product>
     <Description>OpenTimerResolution is a lightweight open-source application that changes the resolution of the Windows system Timer to a specified value and has a memory cache cleaner included.</Description>
@@ -22,6 +22,10 @@
 
   <ItemGroup>
     <Content Include="program.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 	
   <ItemGroup>
