@@ -1,4 +1,3 @@
-using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
@@ -39,7 +38,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.6";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.7";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -108,7 +107,7 @@ namespace OpenTimerResolution
                 if (bool.TryParse(ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
                     automaticCacheCleanBox.Checked = purgeAutomatically;
 
-                float.TryParse(ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution);
+                float.TryParse(ConfigurationManager.AppSettings["DesiredResjolution"], NumberStyles.Float, CultureInfo.InvariantCulture, out desiredResolution);
 
                 if (desiredResolution == 0)
                     desiredResolution = 0.50f;
