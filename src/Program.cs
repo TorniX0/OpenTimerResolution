@@ -1,4 +1,5 @@
 using System.Configuration;
+using System.Globalization;
 
 namespace OpenTimerResolution
 {
@@ -15,6 +16,10 @@ namespace OpenTimerResolution
         [STAThread]
         static void Main()
         {
+            CultureInfo ci = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
             if (System.Diagnostics.Process.GetProcessesByName(System.Diagnostics.Process.GetCurrentProcess().ProcessName).Length > 1)
             {
                 MessageBox.Show("OpenTimerResolution is already running. Only one instance of this application is allowed.", "OpenTimerResolution");

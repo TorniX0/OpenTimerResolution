@@ -38,7 +38,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.7";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.8";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -107,7 +107,7 @@ namespace OpenTimerResolution
                 if (bool.TryParse(ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
                     automaticCacheCleanBox.Checked = purgeAutomatically;
 
-                float.TryParse(ConfigurationManager.AppSettings["DesiredResjolution"], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out desiredResolution);
+                float.TryParse(ConfigurationManager.AppSettings["DesiredResjolution"], out desiredResolution);
 
                 if (desiredResolution == 0)
                     desiredResolution = 0.50f;
@@ -166,7 +166,7 @@ namespace OpenTimerResolution
         {
             if (timerResolutionBox.Text != string.Empty && timerResolutionBox.Text.Last() != '.')
             {
-                warningLabel.Visible = (double.Parse(timerResolutionBox.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) > 15.6250d) ? true : false;
+                warningLabel.Visible = (double.Parse(timerResolutionBox.Text) > 15.6250d) ? true : false;
             }
         }
 
@@ -197,7 +197,7 @@ namespace OpenTimerResolution
             if (timerResolutionBox.Text == string.Empty)
                 return;
 
-            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
+            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
 
             if (result != NtStatus.Success)
             {
@@ -217,7 +217,7 @@ namespace OpenTimerResolution
             if (timerResolutionBox.Text == string.Empty)
                 return;
 
-            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) * 10000f), false, out NtCurrentResolution);
+            var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), false, out NtCurrentResolution);
                 
             if (result != NtStatus.Success)
             {
@@ -309,7 +309,7 @@ namespace OpenTimerResolution
         {
             if (Program.startMinimized)
             {
-                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) * 10000f), true, out NtCurrentResolution);
+                var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
 
                 if (result != NtStatus.Success)
                     MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
