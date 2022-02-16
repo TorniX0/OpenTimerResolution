@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,7 +39,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.8";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.9";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -129,21 +130,44 @@ namespace OpenTimerResolution
 
         public string GetRequest(string uri, bool jsonaccept)
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(uri);
+            HttpClient client = new();
+            client.BaseAddress = new(uri);
+            client.Timeout = new(0, 0, 4);
 
             if (jsonaccept)
                 client.DefaultRequestHeaders
                       .Accept
                       .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var res = client.GetStringAsync(uri).Result;
+            string res = string.Empty;
+
+            try
+            {
+                res = client.GetStringAsync(uri).Result;
+            }
+            catch (AggregateException ex)
+            {
+                ex.Handle(x =>
+                {
+                    if (x is HttpRequestException || x is SocketException)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                });
+            }
+
             return res;
         }
 
         public void CheckForUpdates()
         {
             string json = GetRequest("https://github.com/TorniX0/OpenTimerResolution/releases/latest", true);
+
+            if (json == string.Empty)
+                return;
+
             var obj = JObject.Parse(json);
             string ver = obj["tag_name"].ToString();
             ver = ver.Substring(8, ver.Length - 8);
@@ -218,7 +242,7 @@ namespace OpenTimerResolution
                 return;
 
             var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), false, out NtCurrentResolution);
-                
+
             if (result != NtStatus.Success)
             {
                 MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -265,7 +289,7 @@ namespace OpenTimerResolution
             this.ShowInTaskbar = true;
             this.Show();
             this.BringToFront();
-            this.WindowState = FormWindowState.Normal;  
+            this.WindowState = FormWindowState.Normal;
         }
 
         private void quitStripMenu_Click(object sender, EventArgs e)
