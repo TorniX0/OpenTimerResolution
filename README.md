@@ -16,7 +16,7 @@ You can also enable dark mode (since v1.0.2.4).
 
 You can also silently install the start-up schedule (if not already) using the `-silentInstall` argument, and start minimized. (since v1.0.3.5)
 
-Program will automatically check for any new versions available on GitHub (not using any external sources). (since v1.0.3.6)
+Program will automatically check for any new versions available on GitHub at startup (not using any external sources). (since v1.0.3.6)
 
 **In order for the program to take effect, it needs to be running in the background.** 
 
