@@ -131,6 +131,7 @@ namespace OpenTimerResolution
             // 
             // timerResolutionBox
             // 
+            this.timerResolutionBox.BackColor = System.Drawing.Color.White;
             this.timerResolutionBox.ForeColor = System.Drawing.SystemColors.ControlText;
             this.timerResolutionBox.Location = new System.Drawing.Point(185, 92);
             this.timerResolutionBox.MaxLength = 7;
@@ -157,7 +158,7 @@ namespace OpenTimerResolution
             // 
             // intervalComboBox
             // 
-            this.intervalComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.intervalComboBox.BackColor = System.Drawing.Color.White;
             this.intervalComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.intervalComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.intervalComboBox.FormattingEnabled = true;

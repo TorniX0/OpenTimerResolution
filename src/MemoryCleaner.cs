@@ -15,17 +15,17 @@ namespace OpenTimerResolution
         /// </summary>
         internal static void ClearStandbyCache()
         {
-            SetIncreasePrivilege(SE_PROFILE_SINGLE_PROCESS_NAME);
+            SetIncreasePrivilege("SeProfileSingleProcessPrivilege");
 
             int iSize = Marshal.SizeOf(ClearStandbyPageList);
 
             GCHandle gch = GCHandle.Alloc(ClearStandbyPageList, GCHandleType.Pinned);
-            NtStatus result = NtSetSystemInformation(SYSTEMMEMORYLISTINFORMATION, gch.AddrOfPinnedObject(), iSize);
+            NtStatus result = NtSetSystemInformation(SysMemoryListInfo, gch.AddrOfPinnedObject(), iSize);
             gch.Free();
 
-            if (result != NtStatus.Success)
+            if (result != NtStatus.SUCCESS)
             {
-                MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Concat("Error code: ", result.ToString()), "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -35,37 +35,29 @@ namespace OpenTimerResolution
         /// <summary>
         /// Returns the standby cache in MB.
         /// </summary>
-        internal static Int64 GetStandbyCache()
+        internal static long GetStandbyCache()
         {
-            PERFORMANCE_INFORMATION ppsmemCounter = new PERFORMANCE_INFORMATION();
+            PERFORMANCE_INFORMATION pCounter = new();
 
-            var result = GetPerformanceInfo(out ppsmemCounter, Marshal.SizeOf(ppsmemCounter));
+            bool result = GetPerformanceInfo(out pCounter, Marshal.SizeOf(pCounter));
 
             if (result == true)
-                return Convert.ToInt64(ppsmemCounter.SystemCache.ToInt64() * ppsmemCounter.PageSize.ToInt64() / 1048576);
+                return pCounter.SystemCache.ToInt64() * pCounter.PageSize.ToInt64() / 1048576L;
             else
                 return 0;
         }
 
         /// <summary>
-        /// Returns true if system is running on 64-bit Windows.
-        /// </summary>
-        internal static bool Is64BitMode()
-        {
-            return Marshal.SizeOf(typeof(IntPtr)) == 8;
-        }
-
-        /// <summary>
         /// Returns the total physical memory in MB.
         /// </summary>
-        internal static Int64 GetTotalMemory()
+        internal static long GetTotalMemory()
         {
-            PERFORMANCE_INFORMATION ppsmemCounter = new PERFORMANCE_INFORMATION();
+            PERFORMANCE_INFORMATION pCounter = new();
 
-            var result = GetPerformanceInfo(out ppsmemCounter, Marshal.SizeOf(ppsmemCounter));
+            bool result = GetPerformanceInfo(out pCounter, Marshal.SizeOf(pCounter));
 
             if (result == true)
-                return Convert.ToInt64(ppsmemCounter.PhysicalTotal.ToInt64() * ppsmemCounter.PageSize.ToInt64() / 1048576);
+                return pCounter.PhysicalTotal.ToInt64() * pCounter.PageSize.ToInt64() / 1048576L;
             else
                 return 0;
         }
@@ -73,14 +65,14 @@ namespace OpenTimerResolution
         /// <summary>
         /// Returns the available physical memory in MB.
         /// </summary>
-        internal static Int64 GetAvailableMemory()
+        internal static long GetAvailableMemory()
         {
-            PERFORMANCE_INFORMATION ppsmemCounter = new PERFORMANCE_INFORMATION();
+            PERFORMANCE_INFORMATION pCounter = new();
 
-            var result = GetPerformanceInfo(out ppsmemCounter, Marshal.SizeOf(ppsmemCounter));
+            bool result = GetPerformanceInfo(out pCounter, Marshal.SizeOf(pCounter));
 
             if (result == true)
-                return Convert.ToInt64(ppsmemCounter.PhysicalAvailable.ToInt64() * ppsmemCounter.PageSize.ToInt64() / 1048576);
+                return pCounter.PhysicalAvailable.ToInt64() * pCounter.PageSize.ToInt64() / 1048576L;
             else
                 return 0;
         }
@@ -89,7 +81,7 @@ namespace OpenTimerResolution
         /// Returns the free memory in MB.
         /// (Available physical memory subtracted by the standby cache memory)
         /// </summary>
-        internal static Int64 GetFreeMemory()
+        internal static long GetFreeMemory()
         {
             return GetAvailableMemory() - GetStandbyCache();
         }
@@ -100,23 +92,22 @@ namespace OpenTimerResolution
         /// <param name="privilegeName">The name of the privilege needed.</param>
         private static bool SetIncreasePrivilege(string privilegeName)
         {
-            using (WindowsIdentity current = WindowsIdentity.GetCurrent(TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges))
-            {
-                TokPriv1Luid newst;
-                newst.Count = 1;
-                newst.Luid = 0L;
-                newst.Attr = SE_PRIVILEGE_ENABLED;
+            using WindowsIdentity current = WindowsIdentity.GetCurrent(TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges);
 
-                //Retrieves the LUID used on a specified system to locally represent the specified privilege name
-                if (!LookupPrivilegeValue(null, privilegeName, ref newst.Luid))
-                    throw new Exception("Error in LookupPrivilegeValue: ", new Win32Exception(Marshal.GetLastWin32Error()));
+            TokPriv1Luid newst;
+            newst.Count = 1;
+            newst.Luid = 0L;
+            newst.Attr = SE_PRIVILEGE_ENABLED;
 
-                //Enables or disables privileges in a specified access token
-                int num = AdjustTokenPrivileges(current.Token, false, ref newst, 0, IntPtr.Zero, IntPtr.Zero) ? 1 : 0;
-                if (num == 0)
-                    throw new Exception("Error in AdjustTokenPrivileges: ", new Win32Exception(Marshal.GetLastWin32Error()));
-                return num != 0;
-            }
+            //Retrieves the LUID used on a specified system to locally represent the specified privilege name
+            if (!LookupPrivilegeValue(null, privilegeName, ref newst.Luid))
+                throw new Exception("Error in LookupPrivilegeValue: ", new Win32Exception(Marshal.GetLastWin32Error()));
+
+            //Enables or disables privileges in a specified access token
+            int num = AdjustTokenPrivileges(current.Token, false, ref newst, 0, IntPtr.Zero, IntPtr.Zero) ? 1 : 0;
+            if (num == 0)
+                throw new Exception("Error in AdjustTokenPrivileges: ", new Win32Exception(Marshal.GetLastWin32Error()));
+            return num != 0;
         }
 
         #endregion
@@ -201,9 +192,8 @@ namespace OpenTimerResolution
         [DllImport("psapi.dll", SetLastError = true)]
         private static extern bool GetPerformanceInfo(out PERFORMANCE_INFORMATION pPerformanceInformation, int cb);
 
-        private const int SYSTEMMEMORYLISTINFORMATION = 80;
+        private const int SysMemoryListInfo = 80;
         private const int SE_PRIVILEGE_ENABLED = 2;
-        private const string SE_PROFILE_SINGLE_PROCESS_NAME = "SeProfileSingleProcessPrivilege";
         private const int ClearStandbyPageList = 4;
         internal static long cleanCounter = 0;
 

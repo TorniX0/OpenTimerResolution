@@ -1,12 +1,13 @@
 using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace OpenTimerResolution
 {
     internal static class Program
     {
-        internal static bool startMinimized = Environment.GetCommandLineArgs().Any(t => t.Equals("-minimized"));
-        internal static bool silentInstall = Environment.GetCommandLineArgs().Any(t => t.Equals("-silentInstall"));
+        internal static bool startMinimized = Environment.GetCommandLineArgs().Contains("-minimized");
+        internal static bool silentInstall = Environment.GetCommandLineArgs().Contains("-silentInstall");
 
         /// <summary>
         ///  The main entry point for the application.
@@ -16,11 +17,11 @@ namespace OpenTimerResolution
         [STAThread]
         static void Main()
         {
-            CultureInfo ci = new CultureInfo("en-US");
+            CultureInfo ci = new("en-US");
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
-            if (System.Diagnostics.Process.GetProcessesByName(System.Diagnostics.Process.GetCurrentProcess().ProcessName).Length > 1)
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
                 MessageBox.Show("OpenTimerResolution is already running. Only one instance of this application is allowed.", "OpenTimerResolution");
                 Application.Exit();
@@ -36,7 +37,7 @@ namespace OpenTimerResolution
 
             ApplicationConfiguration.Initialize();
 
-            MainWindow mainWind = new MainWindow();
+            MainWindow mainWind = new();
 
             Application.Run(mainWind);
         }

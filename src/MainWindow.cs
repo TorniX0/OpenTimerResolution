@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OpenTimerResolution
 {
@@ -39,7 +40,7 @@ namespace OpenTimerResolution
         private uint NtActualResolution = 0;
 
         private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.3.9";
+        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.4.0";
 
         private static Dictionary<string, int> Logger = new();
 
@@ -88,12 +89,12 @@ namespace OpenTimerResolution
         {
             InitializeComponent();
 
-            using (TaskService ts = new TaskService())
+            using (TaskService ts = new())
             {
                 installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
             }
 
-            this.Text = $"OpenTimerResolution | {ProgramVersion}";
+            this.Text = string.Concat("OpenTimerResolution | ", ProgramVersion);
 
             bool darkMode = false;
             bool purgeAutomatically = false;
@@ -113,7 +114,7 @@ namespace OpenTimerResolution
                 if (desiredResolution == 0)
                     desiredResolution = 0.50f;
 
-                timerResolutionBox.Text = $"{desiredResolution}";
+                timerResolutionBox.Text = desiredResolution.ToString();
 
                 textUpdateInterval = ConfigurationManager.AppSettings["TextUpdateInterval"];
 
@@ -128,7 +129,7 @@ namespace OpenTimerResolution
             CheckForUpdates();
         }
 
-        public string GetRequest(string uri, bool jsonaccept)
+        public static string GetRequest(string uri, bool jsonaccept)
         {
             HttpClient client = new();
             client.BaseAddress = new(uri);
@@ -174,11 +175,11 @@ namespace OpenTimerResolution
 
             if (ver != ProgramVersion)
             {
-                DialogResult res = MessageBox.Show($"Found a new update! Would you like to be redirected to the GitHub page?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = MessageBox.Show("Found a new update! Would you like to be redirected to the GitHub page?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 switch (res)
                 {
                     case DialogResult.Yes:
-                        Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/TorniX0/OpenTimerResolution/releases/latest") { CreateNoWindow = true });
+                        Process.Start(new ProcessStartInfo("cmd", "/c start https://github.com/TorniX0/OpenTimerResolution/releases/latest") { CreateNoWindow = true });
                         break;
                     case DialogResult.No:
                         break;
@@ -190,7 +191,7 @@ namespace OpenTimerResolution
         {
             if (timerResolutionBox.Text != string.Empty && timerResolutionBox.Text.Last() != '.')
             {
-                warningLabel.Visible = (double.Parse(timerResolutionBox.Text) > 15.6250d) ? true : false;
+                warningLabel.Visible = double.Parse(timerResolutionBox.Text) > 15.6250d;
             }
         }
 
@@ -223,9 +224,9 @@ namespace OpenTimerResolution
 
             var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
 
-            if (result != NtStatus.Success)
+            if (result != NtStatus.SUCCESS)
             {
-                MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Concat("Error code: ", result.ToString()), "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -243,9 +244,9 @@ namespace OpenTimerResolution
 
             var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), false, out NtCurrentResolution);
 
-            if (result != NtStatus.Success)
+            if (result != NtStatus.SUCCESS)
             {
-                MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Concat("Error code: ", result.ToString()), "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -261,15 +262,15 @@ namespace OpenTimerResolution
                 NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
 
             // Timer Resolution labels
-            currentResolutionLabel.Text = $"Current Resolution: {NtActualResolution * 0.0001:N4}ms";
-            minimumResolutionLabel.Text = $"Minimum Resolution: {NtMinimumResolution * 0.0001:N4}ms";
-            maximumResolutionLabel.Text = $"Maximum Resolution: {NtMaximumResolution * 0.0001:N4}ms";
+            currentResolutionLabel.Text = string.Concat("Current Resolution: ", (NtActualResolution * 0.0001).ToString("N4"), "ms");
+            minimumResolutionLabel.Text = string.Concat("Minimum Resolution: ", (NtMinimumResolution * 0.0001f).ToString("N4"), "ms");
+            maximumResolutionLabel.Text = string.Concat("Maximum Resolution: ", (NtMaximumResolution * 0.0001f).ToString("N4") ,"ms");
 
             // Memory Cleaner labels
-            totalSystemMemoryText.Text = $"Total system memory: {MemoryCleaner.GetTotalMemory()} MB";
-            freeMemoryText.Text = $"Free memory: {MemoryCleaner.GetFreeMemory()} MB";
-            cacheSizeText.Text = $"Cache size: {MemoryCleaner.GetStandbyCache()} MB";
-            totalTimesCleanText.Text = $"Total times cleaned: {MemoryCleaner.cleanCounter} time(s)";
+            totalSystemMemoryText.Text = string.Concat("Total system memory: ", MemoryCleaner.GetTotalMemory().ToString(), " MB");
+            freeMemoryText.Text = string.Concat("Free memory: ", MemoryCleaner.GetFreeMemory().ToString(), " MB");
+            cacheSizeText.Text = string.Concat("Cache size: ", MemoryCleaner.GetStandbyCache().ToString(), " MB");
+            totalTimesCleanText.Text = string.Concat("Total times cleaned: ", MemoryCleaner.cleanCounter.ToString(), " time(s)");
         }
 
         private void MainWindow_Resize(object sender, EventArgs e)
@@ -299,34 +300,31 @@ namespace OpenTimerResolution
 
         private void installScheduleButton_Click(object sender, EventArgs e)
         {
-            using (TaskService ts = new TaskService())
+            using TaskService ts = new();
+
+            if (ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes")) ts.RootFolder.DeleteTask("OpenTimerRes");
+            else
             {
-                if (ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
-                {
-                    ts.RootFolder.DeleteTask("OpenTimerRes");
-                }
-                else
-                {
-                    TaskDefinition td = ts.NewTask();
+                TaskDefinition td = ts.NewTask();
 
-                    td.RegistrationInfo.Description = "Opens OpenTimerResultion at startup.";
+                td.RegistrationInfo.Description = "Opens OpenTimerResultion at startup.";
 
-                    td.Principal.RunLevel = TaskRunLevel.Highest;
+                td.Principal.RunLevel = TaskRunLevel.Highest;
 
-                    td.Triggers.Add(new LogonTrigger());
+                td.Triggers.Add(new LogonTrigger());
 
-                    td.Actions.Add(new ExecAction(@$"""{Application.ExecutablePath}""", "-minimized"));
+                td.Actions.Add(new ExecAction(string.Concat("\"", Application.ExecutablePath, "\""), "-minimized"));
 
-                    td.Settings.StopIfGoingOnBatteries = false;
-                    td.Settings.DisallowStartIfOnBatteries = false;
-                    td.Settings.RunOnlyIfNetworkAvailable = false;
-                    td.Settings.Enabled = true;
+                td.Settings.StopIfGoingOnBatteries = false;
+                td.Settings.DisallowStartIfOnBatteries = false;
+                td.Settings.RunOnlyIfNetworkAvailable = false;
+                td.Settings.RunOnlyIfIdle = false;
+                td.Settings.Enabled = true;
 
-                    ts.RootFolder.RegisterTaskDefinition("OpenTimerRes", td);
-                }
-
-                installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
+                ts.RootFolder.RegisterTaskDefinition("OpenTimerRes", td);
             }
+
+            installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -335,8 +333,8 @@ namespace OpenTimerResolution
             {
                 var result = NtSetTimerResolution((int)(float.Parse(timerResolutionBox.Text) * 10000f), true, out NtCurrentResolution);
 
-                if (result != NtStatus.Success)
-                    MessageBox.Show($"Error code: {result}", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (result != NtStatus.SUCCESS)
+                    MessageBox.Show(string.Concat("Error code: ", result.ToString()), "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 timerResolutionBox.ReadOnly = true;
                 timerResolutionBox.Enabled = false;
@@ -348,11 +346,11 @@ namespace OpenTimerResolution
                 this.Hide();
                 this.SendToBack();
             }
-            using (TaskService ts = new TaskService())
-            {
-                if (Program.silentInstall && !ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
-                    installScheduleButton_Click(installScheduleButton, EventArgs.Empty);
-            }
+
+            using TaskService ts = new();
+
+            if (Program.silentInstall && !ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
+                installScheduleButton_Click(installScheduleButton, EventArgs.Empty);
         }
 
         private void logButton_Click(object sender, EventArgs e)
@@ -367,18 +365,18 @@ namespace OpenTimerResolution
             {
                 timerLogger.Stop();
 
-                StringBuilder final = new StringBuilder();
+                StringBuilder final = new();
 
-                final.AppendLine($"- Note: updated once every {timerLogger.Interval}ms." + Environment.NewLine);
+                final.AppendLine(string.Concat("- Note: updated once every ", timerLogger.Interval.ToString(), "ms.", Environment.NewLine));
 
                 foreach (var pair in Logger)
                 {
-                    final.AppendLine($"{pair.Key}ms - {pair.Value} time(s)");
+                    final.AppendLine(string.Concat(pair.Key, "ms - ", pair.Value.ToString(), " time(s)"));
                 }
 
-                SaveFileDialog saveFileDiag = new SaveFileDialog();
+                SaveFileDialog saveFileDiag = new();
                 saveFileDiag.InitialDirectory = Application.ExecutablePath;
-                saveFileDiag.FileName = System.Text.RegularExpressions.Regex.Replace(@$"OTR-{DateTime.Now}.log", "[\\/:*?\"<>|]", "-").Replace(" ", "_");
+                saveFileDiag.FileName = Regex.Replace($"OTR-{DateTime.Now}.log", "[\\/:*?\"<>|]", "-").Replace(" ", "_");
                 saveFileDiag.Title = "Choose where to save log file...";
                 saveFileDiag.DefaultExt = "log";
                 saveFileDiag.Filter = "log files (*.log)|*.log";
@@ -392,14 +390,13 @@ namespace OpenTimerResolution
 
                 if (result != DialogResult.OK)
                 {
-
-                    MessageBox.Show($"Cancelled log saving.", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Cancelled log saving.", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
                 File.WriteAllText(saveFileDiag.FileName, final.ToString());
 
-                MessageBox.Show($"Saved log file in {saveFileDiag.FileName}!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(string.Concat("Saved log file in ", saveFileDiag.FileName, "!"), "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -417,7 +414,7 @@ namespace OpenTimerResolution
 
             if (darkModeBox.Checked)
             {
-                this.BackColor = Color.Black;
+                this.BackColor = Color.FromArgb(255, 13, 13, 13);
                 this.ForeColor = Color.White;
                 UpdateUI();
             }
@@ -431,32 +428,13 @@ namespace OpenTimerResolution
 
         private void UpdateUI()
         {
-            timerResolutionBox.BackColor = this.BackColor;
-            timerResolutionBox.ForeColor = this.ForeColor;
-            intervalComboBox.ForeColor = this.ForeColor;
-            intervalComboBox.BackColor = this.BackColor;
-            logButton.ForeColor = this.ForeColor;
-            logButton.BackColor = this.BackColor;
-            stopButton.ForeColor = this.ForeColor;
-            stopButton.BackColor = this.BackColor;
-            startButton.ForeColor = this.ForeColor;
-            startButton.BackColor = this.BackColor;
-            installScheduleButton.ForeColor = this.ForeColor;
-            installScheduleButton.BackColor = this.BackColor;
-            automaticCacheCleanBox.ForeColor = this.ForeColor;
-            automaticCacheCleanBox.BackColor = this.BackColor;
-            totalTimesCleanText.ForeColor = this.ForeColor;
-            totalTimesCleanText.BackColor = this.BackColor;
-            automaticCacheCleanBox.ForeColor = this.ForeColor;
-            automaticCacheCleanBox.BackColor = this.BackColor;
-            freeMemoryText.ForeColor = this.ForeColor;
-            freeMemoryText.BackColor = this.BackColor;
-            totalSystemMemoryText.ForeColor = this.ForeColor;
-            totalSystemMemoryText.BackColor = this.BackColor;
-            purgeCacheButton.ForeColor = this.ForeColor;
-            purgeCacheButton.BackColor = this.BackColor;
-            updateConfigButton.ForeColor = this.ForeColor;
-            updateConfigButton.BackColor = this.BackColor;
+            for (int i = 0; i < this.Controls.Count; i++)
+            {
+                if (this.Controls[i] == creatorLabel || this.Controls[i] == warningLabel) continue;
+
+                this.Controls[i].ForeColor = this.ForeColor;
+                this.Controls[i].BackColor = this.BackColor;
+            }
         }
 
         private void automaticCacheCleanBox_CheckedChanged(object sender, EventArgs e)
@@ -474,7 +452,7 @@ namespace OpenTimerResolution
 
         private void automaticMemoryPurger_Tick(object sender, EventArgs e)
         {
-            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetFreeMemory() < (MemoryCleaner.GetTotalMemory() / 2))
+            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetFreeMemory() < (MemoryCleaner.GetTotalMemory() * 0.5))
                 MemoryCleaner.ClearStandbyCache();
             else
                 return;
@@ -494,7 +472,7 @@ namespace OpenTimerResolution
             customConfig.Save();
 
 
-            MessageBox.Show($"Config was updated successfully!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Config was updated successfully!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion
