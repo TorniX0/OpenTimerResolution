@@ -39,8 +39,8 @@ namespace OpenTimerResolution
         private uint NtMaximumResolution = 0;
         private uint NtActualResolution = 0;
 
-        private readonly static bool emptyBuildVersion = Assembly.GetEntryAssembly().GetName().Version.Build == -1;
-        private readonly string ProgramVersion = emptyBuildVersion ? Assembly.GetEntryAssembly().GetName().Version.Build.ToString() : "1.0.4.0";
+        private readonly static Version assemblyVersion = Assembly.GetEntryAssembly().GetName().Version;
+        private readonly string programVersion = string.Join('.', assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build, assemblyVersion.Revision);
 
         private static Dictionary<string, int> Logger = new();
 
@@ -94,11 +94,11 @@ namespace OpenTimerResolution
                 installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
             }
 
-            this.Text = string.Concat("OpenTimerResolution | ", ProgramVersion);
+            this.Text = string.Concat("OpenTimerResolution | ", programVersion);
 
             bool darkMode = false;
             bool purgeAutomatically = false;
-            float desiredResolution = 0;
+            float desiredResolution = 0f;
             string textUpdateInterval = string.Empty;
 
             try
@@ -111,7 +111,7 @@ namespace OpenTimerResolution
 
                 float.TryParse(ConfigurationManager.AppSettings["DesiredResjolution"], out desiredResolution);
 
-                if (desiredResolution == 0)
+                if (desiredResolution == 0f)
                     desiredResolution = 0.50f;
 
                 timerResolutionBox.Text = desiredResolution.ToString();
@@ -173,7 +173,7 @@ namespace OpenTimerResolution
             string ver = obj["tag_name"].ToString();
             ver = ver.Substring(8, ver.Length - 8);
 
-            if (ver != ProgramVersion)
+            if (ver != programVersion)
             {
                 DialogResult res = MessageBox.Show("Found a new update! Would you like to be redirected to the GitHub page?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 switch (res)
@@ -191,7 +191,7 @@ namespace OpenTimerResolution
         {
             if (timerResolutionBox.Text != string.Empty && timerResolutionBox.Text.Last() != '.')
             {
-                warningLabel.Visible = double.Parse(timerResolutionBox.Text) > 15.6250d;
+                warningLabel.Visible = float.Parse(timerResolutionBox.Text) > 15.6250f;
             }
         }
 
@@ -203,7 +203,7 @@ namespace OpenTimerResolution
                 e.Handled = true;
             }
 
-            if ((e.KeyChar == '.') && (timerResolutionBox.Text.IndexOf('.') > -1))
+            if ((e.KeyChar == '.') && (timerResolutionBox.Text.IndexOf('.') > 0))
             {
                 e.Handled = true;
             }
@@ -262,7 +262,7 @@ namespace OpenTimerResolution
                 NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
 
             // Timer Resolution labels
-            currentResolutionLabel.Text = string.Concat("Current Resolution: ", (NtActualResolution * 0.0001).ToString("N4"), "ms");
+            currentResolutionLabel.Text = string.Concat("Current Resolution: ", (NtActualResolution * 0.0001f).ToString("N4"), "ms");
             minimumResolutionLabel.Text = string.Concat("Minimum Resolution: ", (NtMinimumResolution * 0.0001f).ToString("N4"), "ms");
             maximumResolutionLabel.Text = string.Concat("Maximum Resolution: ", (NtMaximumResolution * 0.0001f).ToString("N4") ,"ms");
 
@@ -302,7 +302,9 @@ namespace OpenTimerResolution
         {
             using TaskService ts = new();
 
-            if (ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes")) ts.RootFolder.DeleteTask("OpenTimerRes");
+            bool existsAlready = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes");
+
+            if (existsAlready) ts.RootFolder.DeleteTask("OpenTimerRes");
             else
             {
                 TaskDefinition td = ts.NewTask();
@@ -324,7 +326,7 @@ namespace OpenTimerResolution
                 ts.RootFolder.RegisterTaskDefinition("OpenTimerRes", td);
             }
 
-            installScheduleButton.Text = ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes") ? "Remove start-up schedule" : "Install start-up schedule";
+            installScheduleButton.Text = existsAlready ? "Remove start-up schedule" : "Install start-up schedule";
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -404,17 +406,15 @@ namespace OpenTimerResolution
         {
             NtQueryTimerResolution(out NtMinimumResolution, out NtMaximumResolution, out NtActualResolution);
 
-            Logger.TryGetValue((NtActualResolution * 0.0001).ToString("N4"), out var count);
-            Logger[(NtActualResolution * 0.0001).ToString("N4")] = count + 1;
+            Logger.TryGetValue((NtActualResolution * 0.0001f).ToString("N4"), out var count);
+            Logger[(NtActualResolution * 0.0001f).ToString("N4")] = count + 1;
         }
 
         private void darkModeBox_CheckedChanged(object sender, EventArgs e)
         {
-            // Maybe upgrade project to WPF? Not sure.
-
             if (darkModeBox.Checked)
             {
-                this.BackColor = Color.FromArgb(255, 13, 13, 13);
+                this.BackColor = Color.FromArgb(255, 15, 15, 15);
                 this.ForeColor = Color.White;
                 UpdateUI();
             }
