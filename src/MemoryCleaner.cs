@@ -158,9 +158,9 @@ namespace OpenTimerResolution
         /// <summary>
         /// NtSetSystemInformation is used to set some unaccessable KernelMode variables. (There's not too much documentation about this function).
         /// </summary>
-        /// <param name="SystemInformationClass">The system info class.</param>
-        /// <param name="SystemInfo">The system info pointer.</param>
-        /// <param name="SystemInfoLength">The length of the SystemInfo parameter.</param>
+        /// <param name="SystemInformationClass">Specifies what sort of information to set.</param>
+        /// <param name="SystemInfo">A pointer to the buffer that provides the information.</param>
+        /// <param name="SystemInfoLength">The size (in bytes) of the buffer that provides the information.</param>
         [DllImport("ntdll.dll", SetLastError = true)]
         private static extern NtStatus NtSetSystemInformation(int SystemInfoClass, IntPtr SystemInfo, int SystemInfoLength);
 
