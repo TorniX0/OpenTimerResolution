@@ -150,7 +150,7 @@ namespace OpenTimerResolution
             {
                 ex.Handle(x =>
                 {
-                    if (x is HttpRequestException || x is SocketException)
+                    if (x is HttpRequestException || x is SocketException || x is TaskCanceledException)
                     {
                         return true;
                     }
@@ -450,7 +450,7 @@ namespace OpenTimerResolution
 
         private void automaticMemoryPurger_Tick(object sender, EventArgs e)
         {
-            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetFreeMemory() < (MemoryCleaner.GetTotalMemory() * 0.5))
+            if (MemoryCleaner.GetStandbyCache() >= 2048 && MemoryCleaner.GetFreeMemory() < (MemoryCleaner.GetTotalMemory() / 2))
                 MemoryCleaner.ClearStandbyCache();
             else
                 return;
