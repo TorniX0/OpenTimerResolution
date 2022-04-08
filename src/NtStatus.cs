@@ -5,7 +5,7 @@
     /// https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/using-ntstatus-values
     /// </summary>
 
-    public enum NtStatus : uint
+    internal enum NtStatus : uint
     {
 
         /// <summary>

@@ -109,7 +109,7 @@ namespace OpenTimerResolution
                 if (bool.TryParse(ConfigurationManager.AppSettings["StartPurgingAutomatically"], out purgeAutomatically))
                     automaticCacheCleanBox.Checked = purgeAutomatically;
 
-                float.TryParse(ConfigurationManager.AppSettings["DesiredResjolution"], out desiredResolution);
+                float.TryParse(ConfigurationManager.AppSettings["DesiredResolution"], out desiredResolution);
 
                 if (desiredResolution == 0f)
                     desiredResolution = 0.50f;
@@ -129,7 +129,7 @@ namespace OpenTimerResolution
             CheckForUpdates();
         }
 
-        public static string GetRequest(string uri, bool jsonaccept)
+        private static string GetRequest(string uri, bool jsonaccept)
         {
             HttpClient client = new();
             client.BaseAddress = new(uri);
@@ -162,7 +162,7 @@ namespace OpenTimerResolution
             return res;
         }
 
-        public void CheckForUpdates()
+        private void CheckForUpdates()
         {
             string json = GetRequest("https://github.com/TorniX0/OpenTimerResolution/releases/latest", true);
 
@@ -201,11 +201,13 @@ namespace OpenTimerResolution
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
             {
                 e.Handled = true;
+                return;
             }
 
-            if ((e.KeyChar == '.') && (timerResolutionBox.Text.IndexOf('.') > 0))
+            if ((e.KeyChar == '.') && (timerResolutionBox.Text.IndexOf('.') > -1))
             {
                 e.Handled = true;
+                return;
             }
         }
 
@@ -307,7 +309,7 @@ namespace OpenTimerResolution
             {
                 TaskDefinition td = ts.NewTask();
 
-                td.RegistrationInfo.Description = "Opens OpenTimerResultion at startup.";
+                td.RegistrationInfo.Description = "Opens OpenTimerResolution at startup.";
 
                 td.Principal.RunLevel = TaskRunLevel.Highest;
 
@@ -347,10 +349,11 @@ namespace OpenTimerResolution
                 this.SendToBack();
             }
 
-            using TaskService ts = new();
-
-            if (Program.silentInstall && !ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
-                installScheduleButton_Click(installScheduleButton, EventArgs.Empty);
+            using (TaskService ts = new())
+            {
+                if (Program.silentInstall && !ts.RootFolder.AllTasks.Any(t => t.Name == "OpenTimerRes"))
+                    installScheduleButton_Click(installScheduleButton, EventArgs.Empty);
+            }
         }
 
         private void logButton_Click(object sender, EventArgs e)

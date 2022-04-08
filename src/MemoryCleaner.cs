@@ -150,9 +150,9 @@ namespace OpenTimerResolution
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct TokPriv1Luid
         {
-            public int Count;
-            public long Luid;
-            public int Attr;
+            internal int Count;
+            internal long Luid;
+            internal int Attr;
         }
 
         /// <summary>
@@ -167,20 +167,20 @@ namespace OpenTimerResolution
         [StructLayout(LayoutKind.Sequential)]
         private struct PERFORMANCE_INFORMATION
         {
-            public int cb;
-            public IntPtr CommitTotal;
-            public IntPtr CommitLimit;
-            public IntPtr CommitPeak;
-            public IntPtr PhysicalTotal;
-            public IntPtr PhysicalAvailable;
-            public IntPtr SystemCache;
-            public IntPtr KernelTotal;
-            public IntPtr KernelPaged;
-            public IntPtr KernelNonpaged;
-            public IntPtr PageSize;
-            public int HandleCount;
-            public int ProcessCount;
-            public int ThreadCount;
+            internal int cb;
+            internal IntPtr CommitTotal;
+            internal IntPtr CommitLimit;
+            internal IntPtr CommitPeak;
+            internal IntPtr PhysicalTotal;
+            internal IntPtr PhysicalAvailable;
+            internal IntPtr SystemCache;
+            internal IntPtr KernelTotal;
+            internal IntPtr KernelPaged;
+            internal IntPtr KernelNonpaged;
+            internal IntPtr PageSize;
+            internal int HandleCount;
+            internal int ProcessCount;
+            internal int ThreadCount;
         }
 
 
