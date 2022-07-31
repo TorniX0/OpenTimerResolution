@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Task = System.Threading.Tasks.Task;
 
 namespace OpenTimerResolution
 {
@@ -126,14 +127,18 @@ namespace OpenTimerResolution
                 return;
             }
 
+#if !DEBUG
             CheckForUpdates();
+#endif
         }
 
         private static string GetRequest(string uri, bool jsonaccept)
         {
-            HttpClient client = new();
-            client.BaseAddress = new(uri);
-            client.Timeout = new(0, 0, 4);
+            HttpClient client = new()
+            {
+                BaseAddress = new(uri),
+                Timeout = new(0, 0, 4)
+            };
 
             if (jsonaccept)
                 client.DefaultRequestHeaders
@@ -175,16 +180,50 @@ namespace OpenTimerResolution
 
             if (ver != programVersion)
             {
-                DialogResult res = MessageBox.Show("Found a new update! Would you like to be redirected to the GitHub page?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = MessageBox.Show("Found a new update! Would you like to install it?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
                 switch (res)
                 {
                     case DialogResult.Yes:
-                        Process.Start(new ProcessStartInfo("cmd", "/c start https://github.com/TorniX0/OpenTimerResolution/releases/latest") { CreateNoWindow = true });
+
+                        DialogResult type = MessageBox.Show("Framework dependent version?", "OpenTimerResolution", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        string url = (type == DialogResult.Yes) ?
+                            $"https://github.com/TorniX0/OpenTimerResolution/releases/download/{obj["tag_name"]}/OpenTimerResolution.exe" :
+                            $"https://github.com/TorniX0/OpenTimerResolution/releases/download/{obj["tag_name"]}/OpenTimerResolution_s.exe";
+
+                        UpdateProgram(new Uri(url));
                         break;
                     case DialogResult.No:
                         break;
                 }
             }
+        }
+
+        private void UpdateProgram(Uri url)
+        {
+            FileInfo file = new(Application.ExecutablePath);
+            var oldFile = file.DirectoryName + "\\" + file.Name.Replace(file.Extension, ".old");
+            File.Move(file.FullName, oldFile);
+
+            var task = Task.Run(async () => await Utilities.DownloadAsync(url, file.FullName));
+            task.ContinueWith(x =>
+            {
+                Process.Start(new ProcessStartInfo("cmd", $"/c taskkill /f /im {file.Name} && start {file.FullName} && takeown.exe /f \"{oldFile}\" && del \"{oldFile}\" /f /q") { CreateNoWindow = true, Verb = "runas" });
+            });
+
+            updateText.Visible = true;
+            timerResolutionBox.ReadOnly = true;
+            timerResolutionBox.Enabled = false;
+            startButton.Enabled = false;
+            purgeCacheButton.Enabled = false;
+            updateConfigButton.Enabled = false;
+            darkModeBox.Enabled = false;
+            automaticCacheCleanBox.Enabled = false;
+            intervalComboBox.Enabled = false;
+            installScheduleButton.Enabled = false;
+            logButton.Enabled = false;
+            stopButton.Enabled = false;
         }
 
         private void timerResolutionBox_TextChanged(object sender, EventArgs e)
@@ -476,6 +515,6 @@ namespace OpenTimerResolution
             MessageBox.Show("Config was updated successfully!", "OpenTimerResolution", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        #endregion
+#endregion
     }
 }

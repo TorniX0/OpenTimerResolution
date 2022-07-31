@@ -57,6 +57,7 @@ namespace OpenTimerResolution
             this.totalTimesCleanText = new System.Windows.Forms.Label();
             this.automaticMemoryPurger = new System.Windows.Forms.Timer(this.components);
             this.updateConfigButton = new System.Windows.Forms.Button();
+            this.updateText = new System.Windows.Forms.Label();
             this.minimizeIconContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,7 +110,7 @@ namespace OpenTimerResolution
             this.maximumResolutionLabel.BackColor = System.Drawing.Color.Transparent;
             this.maximumResolutionLabel.Location = new System.Drawing.Point(62, 66);
             this.maximumResolutionLabel.Name = "maximumResolutionLabel";
-            this.maximumResolutionLabel.Size = new System.Drawing.Size(123, 15);
+            this.maximumResolutionLabel.Size = new System.Drawing.Size(124, 15);
             this.maximumResolutionLabel.TabIndex = 4;
             this.maximumResolutionLabel.Text = "Maximum Resolution:";
             // 
@@ -149,7 +150,7 @@ namespace OpenTimerResolution
             this.warningLabel.ForeColor = System.Drawing.Color.Red;
             this.warningLabel.Location = new System.Drawing.Point(23, 124);
             this.warningLabel.Name = "warningLabel";
-            this.warningLabel.Size = new System.Drawing.Size(291, 30);
+            this.warningLabel.Size = new System.Drawing.Size(289, 30);
             this.warningLabel.TabIndex = 7;
             this.warningLabel.Text = "WARNING! YOU SHOULDN\'T USE THIS VALUE!\r\nUSE 0.50 IF YOU DON\'T KNOW WHAT YOU\'RE DO" +
     "ING!";
@@ -211,7 +212,7 @@ namespace OpenTimerResolution
             this.creatorLabel.ForeColor = System.Drawing.Color.Gray;
             this.creatorLabel.Location = new System.Drawing.Point(725, 3);
             this.creatorLabel.Name = "creatorLabel";
-            this.creatorLabel.Size = new System.Drawing.Size(55, 15);
+            this.creatorLabel.Size = new System.Drawing.Size(54, 15);
             this.creatorLabel.TabIndex = 10;
             this.creatorLabel.Text = "© TorniX";
             // 
@@ -290,7 +291,7 @@ namespace OpenTimerResolution
             this.totalSystemMemoryText.BackColor = System.Drawing.Color.Transparent;
             this.totalSystemMemoryText.Location = new System.Drawing.Point(393, 50);
             this.totalSystemMemoryText.Name = "totalSystemMemoryText";
-            this.totalSystemMemoryText.Size = new System.Drawing.Size(124, 15);
+            this.totalSystemMemoryText.Size = new System.Drawing.Size(123, 15);
             this.totalSystemMemoryText.TabIndex = 15;
             this.totalSystemMemoryText.Text = "Total system memory:";
             // 
@@ -311,7 +312,7 @@ namespace OpenTimerResolution
             this.totalTimesCleanText.BackColor = System.Drawing.Color.Transparent;
             this.totalTimesCleanText.Location = new System.Drawing.Point(393, 133);
             this.totalTimesCleanText.Name = "totalTimesCleanText";
-            this.totalTimesCleanText.Size = new System.Drawing.Size(112, 15);
+            this.totalTimesCleanText.Size = new System.Drawing.Size(111, 15);
             this.totalTimesCleanText.TabIndex = 19;
             this.totalTimesCleanText.Text = "Total times cleaned:";
             // 
@@ -331,12 +332,25 @@ namespace OpenTimerResolution
             this.updateConfigButton.UseVisualStyleBackColor = true;
             this.updateConfigButton.Click += new System.EventHandler(this.updateConfigButton_Click);
             // 
+            // updateText
+            // 
+            this.updateText.AutoSize = true;
+            this.updateText.Font = new System.Drawing.Font("Segoe UI", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.updateText.Location = new System.Drawing.Point(324, 241);
+            this.updateText.Name = "updateText";
+            this.updateText.Size = new System.Drawing.Size(339, 80);
+            this.updateText.TabIndex = 21;
+            this.updateText.Text = "Updating... (be patient)\r\n(do not close)";
+            this.updateText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.updateText.Visible = false;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(783, 330);
+            this.Controls.Add(this.updateText);
             this.Controls.Add(this.updateConfigButton);
             this.Controls.Add(this.totalTimesCleanText);
             this.Controls.Add(this.automaticCacheCleanBox);
@@ -400,5 +414,6 @@ namespace OpenTimerResolution
         private Label totalTimesCleanText;
         private System.Windows.Forms.Timer automaticMemoryPurger;
         private Button updateConfigButton;
+        private Label updateText;
     }
 }
